@@ -1,0 +1,2 @@
+annotation_structure_file = InkAnnoStructure.xml
+file_chooser_dir = 
