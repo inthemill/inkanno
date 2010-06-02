@@ -1,0 +1,189 @@
+<annotationStructure>
+    <item node="ink" icon="icon/document16.png">
+        <annotation name="authorId" valueType="integer"/>
+        <annotation name="date" valueType="date"/>
+        <annotation name="authorSex" valueType="enum">
+            <value>male</value>
+            <value>female</value>
+        </annotation>
+        <annotation name="authorHanded" valueType="enum">
+            <value>right</value>
+            <value>left</value>
+        </annotation>
+        <annotation name="authorBirthday" valueType="date"/>
+        <annotation name="authorNativeLanguage" valueType="languageCode"/>
+        <annotation name="authorCitizenship" valueType="countryCode"/>
+        <annotation name="authorEducation" valueType="enum">
+            <value>elementary school</value>
+            <value>high-school</value>
+            <value>apprenticeship</value>
+            <value>secondary school</value>
+            <value>bachelor</value>
+            <value>master</value>
+            <value>phd</value>
+        </annotation>
+        <annotation name="authorProfession" />
+    </item>
+    <item node="traceView" id="TVprototype">
+        <annotation name="type" valueType="enum">
+            <value>Textblock</value>
+            <value>Correction</value>
+            <value>Textline</value>
+            <value>Word</value>
+            <value>Arrow</value>
+            <value>Symbol</value>
+            <value>Structure</value>
+            <value>Table</value>
+            <value>List</value>
+            <value>Drawing</value>
+            <value>Diagram</value>
+            <value>Formula</value>
+            <value>Marking</value>
+            <value>Marking_Bracket</value>
+            <value>Marking_Angle</value>
+            <value>Marking_Underline</value>
+            <value>Marking_Encircling</value>
+            <value>Marking_Sideline</value>
+            <value>Marking_Connection</value>
+            <value>Garbage</value>
+            <value>Document</value>
+        </annotation>
+        <annotation name="orientation" valueType="integer" optional="true"/>
+    </item>
+    <item node="traceView" id="document" copyAnnotationFromRef="#TVprototype" icon="icon/document16.png">
+        <annotation name="type" triggerValue="Document"/>
+        
+        <item id="arrow" node="traceView" copyAnnotationFromRef="#TVprototype" icon="icon/arrow16.png">
+            <annotation name="type" triggerValue="Arrow"/>
+            <annotation name="transcription" valueType="proposed">
+                    <value>up</value>
+                    <value>down</value>
+                    <value>left</value>
+                    <value>right</value>
+                    <value>up-right</value>
+                    <value>up-left</value>
+                    <value>down-right</value>
+                    <value>down-left</value>
+                    <value>right-up</value>
+                    <value>right-down</value>
+                    <value>left-up</value>
+                    <value>left-down</value>
+                    <value>u-turn-up</value>
+                    <value>u-turn-down</value>
+                    <value>u-turn-right</value>
+                    <value>u-turn-left</value>
+            </annotation>
+            <traces/>
+        </item>
+        
+        <item node="traceView" id="textblock" copyAnnotationFromRef="#TVprototype" icon="icon/textblock16.png">
+            <annotation name="type" triggerValue="Textblock"/>
+            <item id="line" node="traceView" copyAnnotationFromRef="#textblock" icon="icon/textline16.png">
+                <annotation name="type" triggerValue="Textline"/>
+                <annotation name="transcription" valueType="free"/>
+                <item node="traceView" copyAnnotationFromRef="#textblock" icon="icon/text16.png">
+                    <annotation name="type" triggerValue="Word"/>
+                    <annotation name="transcription" valueType="free"/>
+                    <traces/>
+                    <item id="correction" node="traceView" valueType="proposed" copyAnnotationFromRef="#TVprototype" icon="icon/correction16.png">
+                        <traces/>
+                        <annotation name="type" triggerValue="Correction"/>
+                        <annotation name="transcription" valueType="proposed">
+                            <value>canceling</value>
+                            <value>overwriting</value>
+                        </annotation>
+                    </item>
+                </item>
+                <item itemRef="#arrow"/> 
+                <item id="symbol" node="traceView" copyAnnotationFromRef="#TVprototype" icon="icon/symbol16.png">
+                    <annotation name="type" triggerValue="Symbol"/>
+                    <traces/>
+                </item>
+            </item>
+        </item>
+        
+        <item id="structure" copyAnnotationFromRef="#TVprototype" node="traceView" icon="icon/structure16.png">
+            <traces/>
+            <annotation name="type" triggerValue="Structure"/>
+            <annotation name="transcription" valueType="proposed">
+                <value>box</value>
+                <value>underline</value>
+                <value>circle</value>
+                <value>separating line</value>
+                <value>connecting line</value>
+                <value>diamond</value>
+            </annotation>
+        </item>
+        
+        <item node="traceView" copyAnnotationFromRef="#textblock" icon="icon/table16.png" >
+            <annotation name="type" triggerValue="Table"/>
+            <item itemRef="#line"/>
+            <item itemRef="#structure"/>
+        </item>
+        <item node="traceView" copyAnnotationFromRef="#textblock" icon="icon/list16.png">
+            <annotation name="type" triggerValue="List"/>
+            <item itemRef="#line"/>
+            <item itemRef="#textblock"/>
+        </item>
+        <item id="diagram" node="traceView" copyAnnotationFromRef="#textblock" icon="icon/drawing16.png">
+            <annotation name="type" triggerValue="Drawing"/>
+            <traces/>
+        </item>
+        <item id="formula" node="traceView" copyAnnotationFromRef="#textblock" icon="icon/formula16.png">
+            <annotation name="type" triggerValue="Formula"/>
+            <traces/>
+        </item>
+        <item node="traceView" copyAnnotationFromRef="#textblock" icon="icon/diagram16.png">
+            <annotation name="type" triggerValue="Diagram"/>
+            <item itemRef="#diagram"/>
+            <item itemRef="#line"/>
+            <item itemRef="#arrow"/>
+            <item itemRef="#formula"/>
+            <item itemRef="#structure"/>
+            <item itemRef="#textblock"/>
+        </item>
+        
+        <item node="traceView"  copyAnnotationFromRef="#TVprototype" icon="icon/marking16.png">
+            <annotation name="type" triggerValue="Marking"/>
+            <item itemRef="#line" />
+            <item node="traceView" copyAnnotationFromRef="#TVprototype" icon="icon/markingBrackets16.png">
+                <annotation name="type" triggerValue="Marking_Bracket"/>
+                <traces/>
+                <annotation name="transcription" valueType="enum">
+                    <value>[</value>
+                    <value>]</value>
+                </annotation>
+            </item>
+            <item node="traceView" copyAnnotationFromRef="#TVprototype" icon="icon/markingAngle16.png">
+                <annotation name="type" triggerValue="Marking_Angle"/>
+                <annotation name="transcription" valueType="enum">
+                        <value>top-left</value>
+                        <value>bottom-right</value>
+                        <value>top-right</value>
+                        <value>bottom-left</value>
+                </annotation>
+                <traces/>
+            </item>
+            <item node="traceView" copyAnnotationFromRef="#TVprototype" type="Marking_Underline" icon="icon/markingUnderline16.png">
+                <annotation name="type" triggerValue="Marking_Underline"/>
+                <traces/>
+            </item>
+            <item node="traceView" copyAnnotationFromRef="#TVprototype" type="Marking_Sideline" icon="icon/markingSideline16.png">
+                <annotation name="type" triggerValue="Marking_Sideline"/>
+                <traces/>
+            </item>
+            <item node="traceView" copyAnnotationFromRef="#TVprototype" type="Marking_Connection" icon="icon/markingConnection16.png">
+                <annotation name="type" triggerValue="Marking_Connection"/>
+                <traces/>
+            </item>
+            <item node="traceView" copyAnnotationFromRef="#TVprototype" type="Marking_Encircling" icon="icon/markingCircle16.png">
+                <annotation name="type" triggerValue="Marking_Encircling"/>
+                <traces/>
+            </item>
+        </item>
+        <item node="traceView" copyAnnotationFromRef="#TVprototype" icon="icon/garbage16.png">
+            <annotation name="type" triggerValue="Garbage"/>
+            <traces/>
+        </item>
+    </item>
+</annotationStructure>

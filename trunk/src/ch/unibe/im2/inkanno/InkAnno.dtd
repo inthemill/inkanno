@@ -1,0 +1,35 @@
+<!ELEMENT InkAnno (Head,Body)>
+    <!ELEMENT Head (Sourcefile,Info*)>
+        <!ELEMENT Sourcefile EMPTY>
+            <!ATTLIST Sourcefile 
+                absolutepath CDATA ""
+                relativepath CDATA "">
+        <!ELEMENT Info (CDATA)>
+            <!ATTLIST Info 
+                key CDATA ""
+                type (String|Integer|Float) "String">
+    <!ELEMENT Body (Strokes,Translation)>
+        <!ELEMENT Strokes (Stroke*)>
+            <!ELEMENT Stroke (Point*)>
+                <!ATTLIST Stroke 
+                    id ID ""
+                    color CDATA #IMPLIED   
+                    colour CDATA #IMPLIED
+                    start_time CDATA #IMPLIED
+                    end_time CDATA #IMPLIED>
+                <!ELEMENT Point CDATA>
+                    <!ATTLIST Point EMPTY>
+                        <!ATTLIST Stroke 
+                            x CDATA "0"
+                            y CDATA "0"
+                            time CDATA #IMPLIED>
+        <!ELEMENT Translation (Item*)>
+            <!ELEMENT Item (Item*,StrokeRef*,Attribute*)>
+                <!ATTLIST Item 
+                    id ID ""
+                    start_time CDATA #IMPLIED
+                    end_time CDATA #IMPLIED>
+                <!ELEMENT StrokeRef (IDREF)>
+                <!ELEMENT Attribute (CDATA)>
+                    <ATTLIST Attribute
+                        type CDATA "word">
