@@ -74,7 +74,17 @@ public interface Exporter {
     public void export() throws ExporterException;
 
     /**
+     * Returns a file chooser adapted to the needs of this exporter. So the
+     * file chooser can be associated with a option panel, specific filter can be set
+     * an so on. Note that the default directory should be configurated by the caller 
+     * of this method, and will not be set by this method.
      * 
+     * Note also, this method may return null, so caller, do your tests and 
+     * have some default fileChooser in your hand.
+     * 
+     * @param doc The document where the export will be applied to, to gather some
+     * imported information there.
+     * @return said fileChooser
      */
     public JFileChooser getCustomFileChooser(Document doc);
     

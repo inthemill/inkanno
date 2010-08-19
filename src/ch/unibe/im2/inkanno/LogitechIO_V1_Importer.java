@@ -29,7 +29,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ch.unibe.eindermu.utils.XmlHandler;
+import ch.unibe.im2.inkanno.importer.StrokeImporter;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.InkAnnoCanvas;
 import ch.unibe.inkml.InkCanvas;
 import ch.unibe.inkml.InkCanvasTransform;
 import ch.unibe.inkml.InkChannel;
@@ -43,10 +45,8 @@ import ch.unibe.inkml.InkMLComplianceException;
 import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceLeaf;
-import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.InkChannel.Name;
-import ch.unibe.inkml.InkTraceLeaf.PointConstructionBlock;
+import ch.unibe.inkml.InkChannel.ChannelName;
 import ch.unibe.inkml.util.ViewTreeManipulationException;
 
 public class LogitechIO_V1_Importer extends XmlHandler implements StrokeImporter{
@@ -77,39 +77,45 @@ public class LogitechIO_V1_Importer extends XmlHandler implements StrokeImporter
     	inkSource.setDescription("");     
         definition.enter(inkSource);
         
-        sourceFormat = new InkTraceFormat(ink,"LogitechIOV1Format");
+        
         try{
+            sourceFormat = new InkTraceFormat(ink,"LogitechIOV1Format");
 	        InkChannel x = new InkChannelDouble(ink);
-	        x.setName(InkChannel.Name.X);
+	        x.setName(InkChannel.ChannelName.X);
 	        x.setOrientation(InkChannel.Orientation.P);
+	        x.setFinal();
 	        sourceFormat.addChannel(x);
 	        
 	        InkChannel y = new InkChannelDouble(ink);
-	        y.setName(InkChannel.Name.Y);
+	        y.setName(InkChannel.ChannelName.Y);
 	        y.setOrientation(InkChannel.Orientation.P);
+	        y.setFinal();
 	        sourceFormat.addChannel(y);
 	
 	        InkChannel t = new InkChannelDouble(ink);
-	        t.setName(InkChannel.Name.T);
+	        t.setName(InkChannel.ChannelName.T);
 	        t.setOrientation(InkChannel.Orientation.P);
 	        t.setUnits("s");
+	        t.setFinal();
 	        sourceFormat.addChannel(t);
 	        
 	        InkChannel f = new InkChannelInteger(ink);
-	        f.setName(InkChannel.Name.F);
+	        f.setName(InkChannel.ChannelName.F);
 	        f.setOrientation(InkChannel.Orientation.P);
-	        sourceFormat.addIntermittentChannel(f);
-	        
+	        f.setIntermittent(true);
+	        f.setFinal();
+	        sourceFormat.addChannel(f);
+	        sourceFormat.setFinal();
 	        
 	        definition.enter(sourceFormat);
 	        
-	        InkCanvas canvas = InkCanvas.createInkAnnoCanvas(ink); 
+	        InkCanvas canvas = new InkAnnoCanvas(ink); 
 	        definition.enter(canvas);
 	        transform = InkCanvasTransform.getIdentityTransform(ink,"identityTransform",sourceFormat,canvas.getTraceFormat());
 	        definition.enter(transform);
 	        
 	        context = new InkContext(ink,"maincontext");
-	        context.setInkSource(inkSource);
+	        context.setInkSourceByRef(inkSource);
 	        context.setTraceFormat(sourceFormat);
 	        context.setCanvas(canvas);
 	        context.setCanvasTransform(transform);
@@ -151,20 +157,20 @@ public class LogitechIO_V1_Importer extends XmlHandler implements StrokeImporter
                 String[] f = ((Element) s.getElementsByTagName("F").item(0)).getTextContent().split(" ");
                 
                 for(int i = 0; i < x.length; i++) {
-                    if(x[i].equals("") || y[i].equals("") || f[i].equals("")) {
+                    if(x[i].isEmpty() || y[i].isEmpty() || f[i].isEmpty()) {
                         reduce();
                         continue;
                     }
                     
-                    set(Name.X,Double.parseDouble(x[i]));
-                    set(Name.Y,Double.parseDouble(y[i]));
-                    set(Name.F,Double.parseDouble(f[i]));
+                    set(ChannelName.X,Double.parseDouble(x[i]));
+                    set(ChannelName.Y,Double.parseDouble(y[i]));
+                    set(ChannelName.F,Double.parseDouble(f[i]));
                     if(i==0){
-                        set(Name.T,start);
+                        set(ChannelName.T,start);
                     }else if(i==x.length-1){
-                        set(Name.T,start + 0.001*duration);
+                        set(ChannelName.T,start + 0.001*duration);
                     }else{
-                        set(Name.T,start + (0.001*duration*i/(double)(x.length)));
+                        set(ChannelName.T,start + (0.001*duration*i/(double)(x.length)));
                     }
                     next();
                 }

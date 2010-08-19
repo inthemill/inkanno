@@ -37,15 +37,28 @@ public abstract class AbstractExporter implements Exporter {
         return docMan;
     }
     
+    /**
+     * returns the file that has been set by setFile
+     * @return said file
+     */
     public File getFile(){
         return file;
     }
     
+    /**
+     * returns the stream set by setStream
+     * @return said stream
+     */
     public OutputStream getStream(){
         return stream;
     }
     
 
+    /**
+     * String with filename that has been set as output to the command line
+     * This may be empty,null,not a path, or a not accessable file
+     * @return said string
+     */
     public String output(){
         return Config.getMain().get(AbstractInkAnnoMain.OUTPUT);
     }
@@ -71,17 +84,27 @@ public abstract class AbstractExporter implements Exporter {
     }
     
     /**
-     * @return
+     * Test if the string specified as output file is not null and not empty.
+     * @return said test result as boolean
      */
     protected boolean isCmdOutputSet() {
-        return Config.getMain().get(AbstractInkAnnoMain.OUTPUT) != null && !Config.getMain().get(AbstractInkAnnoMain.OUTPUT).equals("");
+        return Config.getMain().get(AbstractInkAnnoMain.OUTPUT) != null && !Config.getMain().get(AbstractInkAnnoMain.OUTPUT).isEmpty();
     }
     
-    
+    /**
+     * Returns the name of the file associated to the document specified
+     * @param doc The document where the file is extracted from.
+     * @return said ID as string
+     */
     public String getID(Document doc){
         return FileUtil.getInfo(doc.getFile()).name;
     }
     
+    /**
+     * returns true if on the commandline the exporter has been requested
+     * to append the ouput to the output file rather than overwriting it.
+     * @return
+     */
     public boolean isAppendEnabled(){
         return Config.getMain().getB(InkAnno.CMD_OPT_APPEND);
     }
@@ -175,6 +198,16 @@ public abstract class AbstractExporter implements Exporter {
         }
     }
 
+    /**
+     * Returns the file name extended by an id, an extension (eg. .pdf).
+     * Both can be null. If id is null its ignored.
+     * If extension is null, a default extension will be used. which is given by 
+     * getDefaultExtension
+     * @param filename
+     * @param id
+     * @param extension
+     * @return
+     */
     public String extendFileName(String filename, String id, String extension) {
         FileInfo i = FileUtil.getInfo(filename);
     
@@ -185,16 +218,20 @@ public abstract class AbstractExporter implements Exporter {
         }else if(i.extension != null){
             ext = i.extension;
         }else{
-            ext = getDefaultExtension();
+            ext = getDefaultFileNameExtension();
         }
         
         String name = i.name;
-        if(id != null && !id.equals("")){
+        if(id != null && !id.isEmpty()){
             name += "-"+ id;
         }
         return FileUtil.combine(i.dir,name,ext);
     }
     
-    public abstract String getDefaultExtension();
+    /**
+     * Returns the default extension for the output file of this exporter (e.g. pdf).
+     * @return
+     */
+    public abstract String getDefaultFileNameExtension();
     
 }

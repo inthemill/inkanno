@@ -1,13 +1,11 @@
 package ch.unibe.im2.inkanno.exporter;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 
 

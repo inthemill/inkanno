@@ -35,6 +35,7 @@ import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
 import ch.unibe.im2.inkanno.exporter.ExporterFactory;
 import ch.unibe.im2.inkanno.exporter.FactoryException;
+import ch.unibe.im2.inkanno.filter.TimeSpanEraserFilter;
 import ch.unibe.im2.inkanno.util.Histogram;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 import ch.unibe.inkml.InkCanvasTransform;
@@ -70,7 +71,7 @@ public class Document extends AbstractObservable{
     //private double averageTraceHeight;
     
     private boolean isSaved = true;
-    private DefaultTraceFilter traceFilter;
+    private TimeSpanEraserFilter traceFilter;
     private Selection selection;
 
     private String name;
@@ -98,6 +99,7 @@ public class Document extends AbstractObservable{
         //loading
     	DocumentRecognizer dr = new DocumentRecognizer();
         dr.getStrokeImporter(file).importTo(this);
+        testInkAnnoCompatibility();
         this.name = file.getName();
         type = dr.getType(); 
         if(type == DocumentRecognizer.FileType.INKML){
@@ -120,6 +122,27 @@ public class Document extends AbstractObservable{
     }
     
     
+    /**
+     * @throws InvalidDocumentException 
+     * @throws  
+     * 
+     */
+    private void testInkAnnoCompatibility() throws InvalidDocumentException{
+        if(ink == null){
+            
+        }
+        try {
+            if(ink.getViewRoot().getCanvas() != null){
+                InkAnno.getInstance().getCanvas().acceptAsCompatible(ink.getViewRoot().getCanvas(),true);
+            }else if(InkAnno.getInstance().getCanvas().getTraceFormat() != null){
+                InkAnno.getInstance().getCanvas().getTraceFormat().acceptAsCompatible(ink.getViewRoot().getContext().getSourceFormat(),true);
+            }
+        } catch (InkMLComplianceException e) {
+            throw new InvalidDocumentException(e.getMessage());
+        }
+    }
+
+
     /**
      * @param b
      */
@@ -177,9 +200,9 @@ public class Document extends AbstractObservable{
     }
 
 
-    public DefaultTraceFilter getTraceFilter(){
+    public TimeSpanEraserFilter getTraceFilter(){
         if(traceFilter == null){
-            traceFilter = new DefaultTraceFilter(this);
+            traceFilter = new TimeSpanEraserFilter(this);
         }
         return traceFilter;
     }
@@ -228,13 +251,13 @@ public class Document extends AbstractObservable{
 
 	public boolean isVMirroring() {
         for(InkTrace t : this.getInk().getFlatTraces()){
-    		return ((InkTraceLeaf) t).getCanvasFormat().getChannel(InkChannel.Name.Y).getOrientation() == InkChannel.Orientation.M;
+    		return ((InkTraceLeaf) t).getCanvasFormat().getChannel(InkChannel.ChannelName.Y).getOrientation() == InkChannel.Orientation.M;
         }
         return false;
 	}
 	public boolean isHMirroring() {
         for(InkTrace t : this.getInk().getFlatTraces()){
-    		return ((InkTraceLeaf) t).getCanvasFormat().getChannel(InkChannel.Name.X).getOrientation() == InkChannel.Orientation.M;
+    		return ((InkTraceLeaf) t).getCanvasFormat().getChannel(InkChannel.ChannelName.X).getOrientation() == InkChannel.Orientation.M;
         }
         return false;
 	}
@@ -277,7 +300,7 @@ public class Document extends AbstractObservable{
      * 
      */
     public void invertXAxis() throws InkMLComplianceException {
-        invertAxis(InkChannel.Name.X);
+        invertAxis(InkChannel.ChannelName.X);
     }
     
     /**
@@ -290,10 +313,10 @@ public class Document extends AbstractObservable{
      * 
      */
     public void invertYAxis() throws InkMLComplianceException {
-        invertAxis(InkChannel.Name.Y);
+        invertAxis(InkChannel.ChannelName.Y);
     }
 
-    private void invertAxis(InkChannel.Name axis) throws InkMLComplianceException{
+    private void invertAxis(InkChannel.ChannelName axis) throws InkMLComplianceException{
         InkContext context = getCurrentViewRoot().getContext();
         InkCanvasTransform transform = context.getCanvasTransform();
         transform.invertAxis(context.getSourceFormat(),context.getCanvasTraceFormat(),axis);

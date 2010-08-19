@@ -35,6 +35,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Document;
@@ -54,13 +55,13 @@ import ch.unibe.inkml.InkContext;
 import ch.unibe.inkml.InkMLComplianceException;
 
 public class Contr implements ActionListener{
+
+
     /**
      * @author emanuel
      *
      */
     private static Contr inst;
-    
-    public static final String SAVE = "SAVE";
     
     public static final String CLOSE = "CLOSE";
     
@@ -138,9 +139,7 @@ public class Contr implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         try{
         String c = e.getActionCommand();
-        if(c == SAVE)
-            this.saveDocument(null);
-        else if(c == CLOSE)
+        if(c == CLOSE)
             this.closeDocument(null);
         else if(c == DMIRRORING)
             this.dMirroring();
@@ -186,6 +185,9 @@ public class Contr implements ActionListener{
             try {
                 ex.setDocument(d);
                 JFileChooser fc = ex.getCustomFileChooser(d);
+                if(fc == null){
+                    fc = GUI.fileChooser;
+                }
                 fc.setCurrentDirectory(d.getFile().getParentFile());
                 boolean retry = true;
                 File tmpFile = null;
@@ -268,7 +270,8 @@ public class Contr implements ActionListener{
             if(answer == JOptionPane.CANCEL_OPTION) {
                 return;
             } else if(answer == JOptionPane.OK_OPTION) {
-                if(!this.saveDocument(d)) {
+                Save saver =  new Save();
+                if(!saver.saveDocument(d,false)) {
                     return;
                 }
             }
@@ -281,57 +284,78 @@ public class Contr implements ActionListener{
         }
     }
     
-    public boolean saveDocument(Document d) {
-    	Exception failed = new Exception();
-    	if(d == null){
-    	   d = GUI.getInstance().getCurrentDocument();
-    	}
-        while(failed != null) {
-            failed = null;
-            if(d.getFile() != null){
-                if(d.getType() == FileType.INKML){
-                    try {
-                        if(d.isSaved()){
-                            System.err.println("Saving unchanged document!");
+    public static class Save implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveDocument(GUI.getInstance().getCurrentDocument(),false);
+        }
+        
+        public boolean saveDocument(Document d, boolean askFile){
+        	Exception failed = new Exception();
+        	if(d == null){
+        	   d = GUI.getInstance().getCurrentDocument();
+        	}
+            while(failed != null) {
+                failed = null;
+                if(d.getFile() != null){
+                    if(!askFile && d.getType() == FileType.INKML){
+                        try {
+                            if(d.isSaved()){
+                                Messenger.warn("Saving unchanged document!");
+                            }
+                            d.save(d.getFile().getAbsoluteFile());
+                            Messenger.inform("Document "+ d.getName() + " has been saved.");
+                            return true;
+                        } catch (ExporterException e) {
+                            failed = e;
+                        } catch (FactoryException e) {
+                            failed = e;
                         }
-                        d.save(d.getFile().getAbsoluteFile());
-                        System.err.println("Document "+ d.getName() + " has been saved.");
-                        return true;
-                    } catch (ExporterException e) {
+                    }
+                	GUI.fileChooser.setCurrentDirectory(d.getFile().getAbsoluteFile().getParentFile());
+                	GUI.fileChooser.setSelectedFile(d.getFile().getAbsoluteFile());
+                }
+                if(GUI.fileChooser.showSaveDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+                	if (GUI.fileChooser.getSelectedFile().exists() && !GUI.fileChooser.getSelectedFile().equals(d.getFile().getAbsoluteFile())){
+                		if(JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(GUI.getInstance(), "File exists already, do you like to replace it", "File exists already", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
+                			failed = new Exception();
+                            continue;
+                        }
+                	}
+                    try {
+                        d.save(GUI.fileChooser.getSelectedFile());
+                    } catch(ExporterException e) {
                         failed = e;
                     } catch (FactoryException e) {
-                        failed = e;
+    					failed = e;
+    				}
+                    if(failed != null) {
+                        if(JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(GUI.getInstance(), "There was an Error while saving Document: \n" + failed.getMessage()
+                                + "\n do you wish to try it again?", "Error while saving", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)) {
+                            return false;
+                        }
                     }
                 }
-            	GUI.fileChooser.setCurrentDirectory(d.getFile().getAbsoluteFile().getParentFile());
-            	GUI.fileChooser.setSelectedFile(d.getFile().getAbsoluteFile());
+                return true;
             }
-            if(GUI.fileChooser.showSaveDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
-            	if (GUI.fileChooser.getSelectedFile().exists() && !GUI.fileChooser.getSelectedFile().equals(d.getFile().getAbsoluteFile())){
-            		if(JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(GUI.getInstance(), "File exists already, do you like to replace it", "File exists already", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
-            			failed = new Exception();
-                        continue;
-                    }
-            	}
-                try {
-                    d.save(GUI.fileChooser.getSelectedFile());
-                } catch(ExporterException e) {
-                    failed = e;
-                } catch (FactoryException e) {
-					failed = e;
-				}
-                if(failed != null) {
-                    if(JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(GUI.getInstance(), "There was an Error while saving Document: \n" + failed.getMessage()
-                            + "\n do you wish to try it again?", "Error while saving", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR)) {
-                        return false;
-                    }
-                }
-            }
-            return true;
+            return false;
         }
-        return false;
     }
  
+    /**
+     * @author emanuel
+     *
+     */
+    public static class SaveAs extends Save {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveDocument(GUI.getInstance().getCurrentDocument(),true);
+        }
+
+    }
+    
     public static class OpenDocument implements ActionListener{
 
         @Override

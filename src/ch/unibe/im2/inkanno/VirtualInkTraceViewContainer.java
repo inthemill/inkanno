@@ -28,50 +28,28 @@ public class VirtualInkTraceViewContainer extends InkTraceViewContainer {
         super(ink);
     }
     
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void buildFromXMLNode(Element node) throws InkMLComplianceException {
         // A virtual InkTraceViewContainer will never be stored to XML, hence it should not be build from it.
         throw new NotImplementedException();
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void exportToInkML(Element parent) throws InkMLComplianceException {
         // do nothing: 
         // a virtual InkTraceViewContainer will never be stored to InkML see class description
     }
     
-    /**
-     * 
-     * {@inheritDoc}
-     * @throws ViewTreeManipulationException 
-     */
     public void add(List<InkTraceView> viewList) throws ViewTreeManipulationException {
         throw new ViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
         		" hidden in other view trees.");
     }
     
-    /**
-     * 
-     * {@inheritDoc}
-     * @throws ViewTreeManipulationException 
-     */
     public void addTrace(InkTraceView tv) throws ViewTreeManipulationException {
         throw new ViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
         " hidden in other view trees.");
     }
 
-    /**
-     * @param viewLeaf
-     * @throws ViewTreeManipulationException 
-     */
     public void addByBackdoor(InkTraceViewLeaf viewLeaf) throws ViewTreeManipulationException {
         super.addTrace(viewLeaf);
     } 

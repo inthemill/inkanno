@@ -29,7 +29,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.List;
 import java.util.SortedSet;
 
 import javax.swing.JButton;
@@ -54,7 +53,7 @@ public class SelectionView extends JPanel implements Observer{
     
     private JLabel nrOfStrokes;
     
-    private JTextField startTime;
+    private JLabel startTime;
     
     private JLabel endTime;
 
@@ -91,17 +90,17 @@ public class SelectionView extends JPanel implements Observer{
         this.add(nrOfStrokes, gc.clone());
         
         // time
-        l = new JLabel("Time from:");
+        l = new JLabel("From (s):");
         
         gc.gridy = 1;
         this.add(l, gc.clone());
         
-        startTime = new JTextField();
-        startTime.setPreferredSize(new Dimension(110, 20));
+        startTime = new JLabel();
+        //startTime.setPreferredSize(new Dimension(110, 20));
         this.add(startTime, gc.clone());
         
         // time
-        l = new JLabel("Time till:");
+        l = new JLabel("To (s):");
         gc.gridy++;
         this.add(l, gc.clone());
         
@@ -145,20 +144,28 @@ public class SelectionView extends JPanel implements Observer{
     public void notifyFor(Aspect event, Object subject) {
         SortedSet<InkTraceView> s = GUI.getInstance().getCurrentDocument().getSelection().getContent();
         if(s.size() > 0) {
-            
-            startTime.setText(doubleValue(s.first().getTimeSpan().start));
-            endTime.setText(doubleValue(s.last().getTimeSpan().end));
+            double zero = s.first().getInk().getViewRoot().getTimeSpan().start;
+            startTime.setText(doubleValue(s.first().getTimeSpan().start-zero));
+            startTime.setToolTipText("relative to: "+doubleValue(zero));
+            endTime.setText(doubleValue(s.last().getTimeSpan().end-zero));
+            endTime.setToolTipText("Delta: "+ "("+doubleValue(s.last().getTimeSpan().end-s.first().getTimeSpan().start)+")");
             TraceBound tb = new TraceBound(s.first().getBounds());
             String traces = "("+s.size()+")";
+            String names = "";
             for(InkTraceView trace : s){
                 tb.add(trace.getBounds());
                 if(trace.isLeaf()){
-                    traces +=","+((InkTraceViewLeaf)trace).getTrace().getId();
+                    names +=","+((InkTraceViewLeaf)trace).getTrace().getId();
                 }else{
-                    traces +=",[]";
+                    names +=","+trace.getId();
                 }
             }
-            nrOfStrokes.setText(traces);
+            nrOfStrokes.setToolTipText(names);
+            if(s.size() < 4){
+                nrOfStrokes.setText(traces+names);
+            }else{
+                nrOfStrokes.setText(traces);
+            }
             topleft.setText(""+tb.x+"x"+tb.y);
             dimension.setText("\n"+tb.width+"x"+tb.height);
         } else {
@@ -173,6 +180,13 @@ public class SelectionView extends JPanel implements Observer{
         long l = (long) (d * 1000);
         String str = "";
         long z = 10;
+        if(l < 0){
+            str+="-";
+        }
+        l = Math.abs(l);
+        if(l==0){
+            str+="0";
+        }
         while(l > 0) {
             long t = l % z;
             l = l - t;

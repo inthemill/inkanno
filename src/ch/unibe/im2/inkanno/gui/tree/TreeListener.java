@@ -32,9 +32,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import ch.unibe.im2.inkanno.Selection;
-import ch.unibe.im2.inkanno.gui.GUI;
-import ch.unibe.inkml.InkTraceView;
-import ch.unibe.inkml.InkTraceViewContainer;
 
 public class TreeListener implements MouseListener, TreeSelectionListener, MouseMotionListener{
     

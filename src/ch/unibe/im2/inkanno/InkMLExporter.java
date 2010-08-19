@@ -2,9 +2,7 @@ package ch.unibe.im2.inkanno;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.util.Iterator;
 
-import javax.print.Doc;
 import javax.swing.JFileChooser;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;

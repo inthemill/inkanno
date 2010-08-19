@@ -161,7 +161,7 @@ public class SmoothingImage extends RegisteredImageExportDrawer{
 		public double var;
 		public int count;
 		public int intMax = 0xffffff;
-		public int intMin = 0;
+		//public int intMin = 0;
 		public void add(double v){
             count++;
             mean += v;
@@ -171,10 +171,10 @@ public class SmoothingImage extends RegisteredImageExportDrawer{
             if(min > v)
             	min = v;
 		}
-		public int normalizeVariance(double var2) {
+		/*public int normalizeVariance(double var2) {
 			return (int) Math.max(255,var*2*255/(double)0xffffff);
 
-		}
+		}*/
 		public void close(){
 			mean = mean/(double) count;
 			var = var/(count) - mean*mean;

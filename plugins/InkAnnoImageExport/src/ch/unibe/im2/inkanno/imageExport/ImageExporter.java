@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +90,7 @@ public class ImageExporter extends AbstractExporter {
     }
 	
     
-    public String getDefaultExtension(){
+    public String getDefaultFileNameExtension(){
         if(getFileType() == null){
             FileType.PNG.toString();
         }
@@ -103,7 +102,7 @@ public class ImageExporter extends AbstractExporter {
 	    switch (getCase()){
 	        case 0: 
 	        case 6:
-	            return new File(extendFileName(doc.getFile().getPath(),null,getDefaultExtension()));
+	            return new File(extendFileName(doc.getFile().getPath(),null,getDefaultFileNameExtension()));
 	        case 1:
 	            return new File(output());
 	        case 2: 
@@ -118,9 +117,9 @@ public class ImageExporter extends AbstractExporter {
 	        case 4:
 	            return getFile();
 	        case 8:
-	            return new File(extendFileName(output(),getID(),null));
+	            return new File(extendFileName(output(),getID(doc),null));
 	        case 11:
-	            return new File(extendFileName(getFile().getPath(),getID(),null));
+	            return new File(extendFileName(getFile().getPath(),getID(doc),null));
 	        default:
 	            throw new ExporterException("Exporter in unknown state");
 	    }
@@ -130,7 +129,7 @@ public class ImageExporter extends AbstractExporter {
 	public static Dimension determDimension(final Document doc){
 		String size = Config.getMain().get("image_size");
 		Rectangle r = doc.getBounds();
-		if(size!=null && !size.equals("")){
+		if(size!=null && !size.isEmpty()){
 			Dimension dim = new Dimension();
 			if(size.matches("[0-9]+x[0-9]+")){
 				String[] res = size.split("x");
@@ -190,13 +189,13 @@ public class ImageExporter extends AbstractExporter {
             RegisteredImageExportDrawer drawer = null;
             
             for(RegisteredImageExportDrawer d : drawers){
-                if(outputType.equals(d.getId())){
+                if(getOutputType().equals(d.getId())){
                     drawer = d;
                 }
             }
             
             if(drawer == null){
-                throw new IllegalArgumentException("There is no image type called '"+outputType);
+                throw new IllegalArgumentException("There is no image type called '"+getOutputType());
             }
             
             drawer.setDimension(dimension);

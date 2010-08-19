@@ -6,7 +6,7 @@
     </description>
     <!-- set global properties for this build -->
     <property file="build.properties" />
-	
+	<property name="preproc" value=".preproc" />
 	<path id="inkml.dir" location="${libinkml.dir}"/>
 		
     
@@ -14,8 +14,26 @@
         <mkdir dir="${build}"/>
     </target>
 
-    <target name="compile" depends="dirs,libInkML" description="compile the source files">
-    	<javac srcdir="${src}" destdir="${build}" encoding="utf-8" debug="true">
+	<target name="ownTasks" depends="compile">
+		<taskdef name="plugins"
+			classname="ch.unibe.im2.inkanno.util.PluginTask"
+			classpath="${build}" />
+	</target>
+	
+	<target name="preprocess">
+		<copy todir="${preproc}" >
+			<fileset dir="${src}">
+				<exclude name="**/.*"/>
+			</fileset>
+		</copy>
+		<property name="main" value="${preproc}/ch/unibe/im2/inkanno/InkAnno.java"/>
+        <replace file="${main}" token="$version$" value="${version}"/>
+	    <replace file="${main}" token="$name$" value="${name}"/>
+	</target>
+	
+    <target name="compile" depends="dirs,libInkML,preprocess" description="compile the source files">
+        <delete file="MANIFEST.MF"/>
+    	<javac srcdir="${preproc}" destdir="${build}" encoding="utf-8" debug="true">
         	<classpath>
                 <pathelement path="${libinkml.jar}"/>
         	</classpath>
@@ -31,6 +49,7 @@
     			  <file name="default_config.txt"/>
     			  <file name="InkAnnoStructure.xml"/>
     			  <file name="strings.properties"/>
+    		      <file name="InkAnnoInkMLCanvas.inkml"/>
     		</filelist>
     	</copy>
     	<copy todir="${build}/ch/unibe/im2/inkanno/exporter" 
@@ -38,27 +57,30 @@
     </target>
 	
 
-    <target name="jar" depends="compile,plugins,manifest">
+    <target name="jar" depends="compile,manifest">
         <jar destfile="${name}.jar" basedir="${build}" manifest="MANIFEST.MF">
-        	<exclude name="ch/unibe/im2/inkanno/pdfExport/*"/>
-        	<exclude name="ch/unibe/inkml/featureExtraction/*"/>
             <fileset dir="${src}">
-            	<exclude name="ch/unibe/im2/inkanno/imageExport/*.java"/>
-            	<exclude name="ch/unibe/im2/inkanno/pdfExport/*.java"/>
-            	<exclude name="ch/unibe/inkml/featureExtraction/*.java"/>
+        	   <exclude name="**/.*"/>
         	</fileset>
         </jar>
     </target>
 	
-    <target name="all" depends="jar,plugins">
+
+    <target name="all" depends="plugins,jar">
 	</target>
 
-	<target name="plugins" depends="compile,libInkML">
+	<target name="plugins" depends="compile,libInkML,ownTasks">
+	    <delete file="MANIFEST.MF"/>
 		<dirname file="${ant.file}" property="inkanno.dir"/>
 		<dirname file="${libinkml.jar}" property="tmp.libinkml.jar.dir"/>
 		<basename file="${libinkml.jar}" property="tmp.libinkml.jar.name"/>
 		<dirname file="${libinkml.dir}" property="tmp.libinkml.dir.dir"/>
 		<basename file="${libinkml.dir}" property="tmp.libinkml.dir.name"/>
+		
+		<plugins plugins="${plugins}">
+			<property name="plugin" value="@{plugin}"/>
+			<echo>${plugin}</echo>
+		</plugins>
 		<subant>
 			<property name="inkanno.dir" value="${inkanno.dir}"/>
 			<property name="inkanno.classpath" value="${inkanno.dir}/${build}"/>
@@ -72,6 +94,7 @@
 	<target name="manifest">
 	    <manifestclasspath property="plugin.classpath" jarfile="${name}.jar">
 			<classpath>
+			    <path location="${libinkml.jar}"/>
 			    <fileset dir="plugins" includes="*/*.jar" />
 			</classpath>
 		</manifestclasspath>
@@ -88,6 +111,7 @@
 	
     <target name="clean">
     	<delete dir="${build}"/>
+    	<delete dir="${preproc}"/>
         <delete file="${name}.jar"/>
         <delete file="${dist}.zip"/>
     	<delete file="MANIFEST.MF"/>

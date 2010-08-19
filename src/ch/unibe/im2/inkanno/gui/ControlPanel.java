@@ -24,23 +24,14 @@ package ch.unibe.im2.inkanno.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
-import java.awt.dnd.Autoscroll;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -48,42 +39,29 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.TransferHandler;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreePath;
 
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
-import ch.unibe.im2.inkanno.InkAnno;
 import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;
 import ch.unibe.im2.inkanno.Selection;
 import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTree;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTreeModel;
-import ch.unibe.im2.inkanno.gui.tree.TreeElement;
-import ch.unibe.im2.inkanno.gui.tree.TreeElementViewContainer;
 import ch.unibe.im2.inkanno.gui.tree.TreeListener;
 import ch.unibe.inkml.InkInk;
-import ch.unibe.inkml.InkTraceContainer;
-import ch.unibe.inkml.InkTraceView;
-import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.AnnotationStructure.Annotation;
 import ch.unibe.inkml.AnnotationStructure.Item;
 import ch.unibe.inkml.AnnotationStructure.Annotation.ValueType;
 import ch.unibe.inkml.util.Timespan;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
 
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel implements Observer{

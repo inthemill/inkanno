@@ -34,6 +34,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ch.unibe.im2.inkanno.importer.InkAnnoStrokeImporter;
+import ch.unibe.im2.inkanno.importer.InkMLImporter;
+import ch.unibe.im2.inkanno.importer.PGC_Text_Importer;
+import ch.unibe.im2.inkanno.importer.StrokeImporter;
+import ch.unibe.im2.inkanno.importer.WhiteboardStrokeImporter;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 
 public class DocumentRecognizer extends DefaultHandler{

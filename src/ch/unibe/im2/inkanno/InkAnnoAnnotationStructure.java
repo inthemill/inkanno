@@ -13,7 +13,6 @@ import ch.unibe.eindermu.utils.Config;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.inkml.AnnotationStructure;
 import ch.unibe.inkml.InkAnnotatedElement;
-import ch.unibe.inkml.InkTraceView;
 
 
 /**

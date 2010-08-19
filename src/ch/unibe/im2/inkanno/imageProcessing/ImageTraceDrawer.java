@@ -2,7 +2,6 @@ package ch.unibe.im2.inkanno.imageProcessing;
 
 
 import ch.unibe.eindermu.utils.Config;
-
 import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;
 import ch.unibe.inkml.InkTraceViewContainer;
 

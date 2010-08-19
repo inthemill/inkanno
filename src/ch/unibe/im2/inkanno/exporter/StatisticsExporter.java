@@ -80,7 +80,7 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
         if(stream != null){
             return;
         }
-        if(Config.getMain().get(AbstractInkAnnoMain.OUTPUT) != null && !Config.getMain().get(AbstractInkAnnoMain.OUTPUT).equals("")){
+        if(Config.getMain().get(AbstractInkAnnoMain.OUTPUT) != null && !Config.getMain().get(AbstractInkAnnoMain.OUTPUT).isEmpty()){
             file = new File(Config.getMain().get(AbstractInkAnnoMain.OUTPUT));
             
             if(Config.getMain().getB(InkAnno.CMD_OPT_APPEND) && file != null){
@@ -300,6 +300,10 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
             inc("structure-count");
         }else if(container.testAnnotation("type","Garbage")){
             inc("garbage-count");
+        }else if(container.testAnnotation("type","Correction")){
+            inc("correction-count");
+        }else if(container.testAnnotation("type","Document")){
+            //ignore
         }else {
             if(container.containsAnnotation("type")){
                 System.err.println("not Counted: "+container.getAnnotation("type"));
@@ -317,8 +321,12 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
 
     @Override
     protected void visitHook(InkTraceViewLeaf leaf) {
-        
-        
+        if(!leaf.testAnnotationTree("type", "Garbage")){
+            inc("stroke-count");
+        }
+        if((leaf.testAnnotationTree("type","Textline") && !leaf.testAnnotationTree("type","Correction")) || leaf.testAnnotationTree("type","Formula")){
+            inc("text-stroke-count");
+        }
     }
 
     @Override

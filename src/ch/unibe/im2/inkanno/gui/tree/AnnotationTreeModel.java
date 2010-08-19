@@ -3,13 +3,10 @@
  */
 package ch.unibe.im2.inkanno.gui.tree;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
@@ -22,7 +19,6 @@ import javax.swing.tree.TreePath;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Document;
-import ch.unibe.inkml.InkTraceContainer;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceView.TreeEvent;
@@ -71,7 +67,7 @@ public class AnnotationTreeModel implements TreeModel, Observer, TreeExpansionLi
                 int[] childIndices = new int[total];
                 int i =0;
                 int k = 0;
-                for(InkTraceView v: (InkTraceViewContainer) e.target){
+                for(InkTraceView v: ((InkTraceViewContainer) e.target).getContent()){
                     if(v.isLeaf()) continue;
                     if(e.children.contains(v)){
                         childIndices[k++]=i;
@@ -95,7 +91,7 @@ public class AnnotationTreeModel implements TreeModel, Observer, TreeExpansionLi
                 int[] childIndices = new int[total];
                 int i =0;
                 int k = 0;
-                for(InkTraceView v: (InkTraceViewContainer) e.target){
+                for(InkTraceView v: ((InkTraceViewContainer) e.target).getContent()){
                     if(v.isLeaf()) continue;
                     if(e.children.contains(v)){
                         childIndices[k++]=i;
@@ -131,11 +127,7 @@ public class AnnotationTreeModel implements TreeModel, Observer, TreeExpansionLi
     public void addTreeModelListener(TreeModelListener l) {
         this.listeners.add(l);
     }
-    
-    public InkTraceContainer c(Object p) {
-        return (InkTraceContainer) p;
-    }
-    
+      
     public void sendEvent(TreeModelEvent e) {
         //ControlPanel.this.tree.removeSelectionPaths(ControlPanel.this.tree.getSelectionPaths());
         for(TreeModelListener l : this.listeners) {

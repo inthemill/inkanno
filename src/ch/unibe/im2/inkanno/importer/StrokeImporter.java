@@ -20,8 +20,9 @@
  * @author emanuel
  */
 
-package ch.unibe.im2.inkanno;
+package ch.unibe.im2.inkanno.importer;
 
+import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 
 public interface StrokeImporter{

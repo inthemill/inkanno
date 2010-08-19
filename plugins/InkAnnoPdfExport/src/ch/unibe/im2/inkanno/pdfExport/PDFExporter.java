@@ -164,7 +164,7 @@ public class PDFExporter extends AbstractExporter {
 	}
 	
     
-    public String getDefaultExtension(){
+    public String getDefaultFileNameExtension(){
         return "pdf";
     }
 

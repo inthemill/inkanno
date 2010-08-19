@@ -50,13 +50,11 @@ import javax.swing.event.ChangeListener;
 
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
-import ch.unibe.eindermu.utils.ConfigView;
 import ch.unibe.eindermu.utils.Observable;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
-import ch.unibe.im2.inkanno.InkAnno;
 import ch.unibe.im2.inkanno.controller.CanvasController;
 import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
@@ -228,7 +226,7 @@ public class GUI extends JFrame implements Observable, Observer{
         else if(event == DocumentManager.ON_DOCUMENT_UNLOADING){
             if(autosave){
                 if(!((Document)subject).isSaved()){
-                    Contr.getInstance().saveDocument((Document)subject);
+                    (new Contr.Save()).saveDocument((Document)subject,false);
                 }
             }
         }
@@ -296,7 +294,8 @@ public class GUI extends JFrame implements Observable, Observer{
         // save
         b = new JButton(new ImageIcon(this.getClass().getResource("images/Save16.gif")));
         b.setToolTipText("Save this annotation");
-        Contr.getInstance().controll(b, Contr.SAVE, Contr.DD);
+        b.addActionListener(new Contr.Save());
+        setInSyncWithDocumentPresence(b);
         this.toolbar.add(b);
         // close
         b = new JButton(new ImageIcon(this.getClass().getResource("images/Close16.png")));

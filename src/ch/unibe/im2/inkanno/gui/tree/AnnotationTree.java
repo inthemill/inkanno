@@ -3,15 +3,12 @@
  */
 package ch.unibe.im2.inkanno.gui.tree;
 
-import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.Autoscroll;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragSource;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
@@ -24,15 +21,12 @@ import java.util.List;
 
 import javax.swing.DropMode;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import ch.unibe.im2.inkanno.InkAnno;
 import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.util.ViewTreeManipulationException;
