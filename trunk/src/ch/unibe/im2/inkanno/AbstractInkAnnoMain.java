@@ -3,10 +3,10 @@ package ch.unibe.im2.inkanno;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 import ch.unibe.eindermu.AbstractMain;
+import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 
@@ -18,7 +18,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
     
     protected Document createDocument() {
         Document document = null;
-        if(getConfig().get(INPUT)!= null && !getConfig().get(INPUT).equals("")){
+        if(getConfig().get(INPUT)!= null && !getConfig().get(INPUT).isEmpty()){
             String errormessage = "Input file "+new File(getConfig().get(INPUT))+" can not be loaden";
             File file = new File(getConfig().get(INPUT));
             boolean ok = true;
@@ -38,7 +38,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
                 ok = false;
             }
             if(!ok){
-                showError(errormessage);
+                Messenger.error(errormessage);
                 System.exit(1);
             }
         }
@@ -46,7 +46,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
     }
     /*
     protected int eachDocument(Block<Document,Boolean> block){
-        if(getConfig().get(INPUT)== null || getConfig().get(INPUT).equals("")){
+        if(getConfig().get(INPUT)== null || getConfig().get(INPUT).isEmpty()){
             return 0;
         }
         StringList documentFileList = new StringList();
@@ -105,7 +105,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
      */
     public DocumentManager getDocumentManager(boolean loadOnlyCurrent) throws IOException {
         final StringList documentFileList = new StringList();
-        if(!(getConfig().get(INPUT)== null || getConfig().get(INPUT).equals(""))){
+        if(!(getConfig().get(INPUT)== null || getConfig().get(INPUT).isEmpty())){
             if(getConfig().getB(InkAnno.CMD_OPT_INPUT_FILE)){
                 File file = new File(getConfig().get(INPUT));
                 try {
@@ -114,7 +114,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
                         documentFileList.add(sc.nextLine());
                     }
                 } catch (FileNotFoundException e) {
-                    showError(String.format("File %s containing list of input file does not exits",getConfig().get(INPUT)));
+                    Messenger.error(String.format("File %s containing list of input file does not exits",getConfig().get(INPUT)));
                     e.printStackTrace();
                     System.exit(1);
                 }

@@ -43,7 +43,6 @@ import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Selection;
 import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.im2.inkanno.gui.TraceCanvas;
-import ch.unibe.im2.inkanno.gui.tree.TreeListener;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.util.TraceBound;
 import ch.unibe.inkml.util.ViewTreeManipulationException;

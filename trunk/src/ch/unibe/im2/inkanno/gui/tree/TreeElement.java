@@ -4,7 +4,6 @@
 package ch.unibe.im2.inkanno.gui.tree;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -12,7 +11,6 @@ import javax.swing.tree.TreePath;
 
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
-import ch.unibe.inkml.InkTraceViewLeaf;
 
 public abstract class TreeElement{
     /**

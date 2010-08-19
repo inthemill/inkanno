@@ -6,12 +6,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JComboBox;
@@ -33,7 +29,6 @@ import javax.swing.text.JTextComponent;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.eindermu.utils.StringList;
-import ch.unibe.eindermu.utils.StringMap;
 import ch.unibe.eindermu.utils.StringSet;
 import ch.unibe.im2.inkanno.DocumentManager;
 import ch.unibe.im2.inkanno.Selection;
@@ -198,7 +193,7 @@ public class AnnotationView extends JPanel implements Observer {
 	
     protected void setValue(String key, Object value) {
         for(InkAnnotatedElement view : elements){
-            if(value == empty || value == null || value.equals("")){
+            if(value == empty || value == null || value.toString().isEmpty()){
                 view.removeAnnotation(key);
             }else if(value != unequal && !value.toString().equals(unequal.toString()) ){
                 if(!view.containsAnnotation(key) || !view.getAnnotation(key).equals(value.toString())){

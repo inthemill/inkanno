@@ -26,9 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -38,7 +36,6 @@ import javax.swing.KeyStroke;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.FileUtil;
 import ch.unibe.eindermu.utils.Observer;
-import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
 import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;

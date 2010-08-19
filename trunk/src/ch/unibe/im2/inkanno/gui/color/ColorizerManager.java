@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Properties;
 
 import ch.unibe.eindermu.utils.Config;
-import ch.unibe.im2.inkanno.InkAnno;
-import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.FactoryException;
 import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.util.TraceViewFilter;
@@ -60,7 +58,7 @@ public class ColorizerManager {
         if(colorizers.size() == 0){
             currentColorizer = new NullColorizer();
         }else
-        if(Config.getMain().get("colorizer")!= null && !Config.getMain().get("colorizer").equals("")){
+        if(Config.getMain().get("colorizer")!= null && !Config.getMain().get("colorizer").isEmpty()){
             String selection = Config.getMain().get("colorizer");
             for(Colorizer col : colorizers){
                 if(col.isResponsible(selection)){

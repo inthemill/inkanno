@@ -41,7 +41,7 @@ public class MyFileChooser extends JFileChooser{
 	}
 	
     public int showDialog(Component parent, String approveButtonText) {
-        if(!directoryForced && !InkAnno.config().get("file_chooser_dir").equals("")) {
+        if(!directoryForced && !InkAnno.config().get("file_chooser_dir").isEmpty()) {
             this.setCurrentDirectory(new File(InkAnno.config().get("file_chooser_dir")));
         }
         int result = super.showDialog(parent, approveButtonText);

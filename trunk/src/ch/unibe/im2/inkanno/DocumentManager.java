@@ -6,13 +6,12 @@ package ch.unibe.im2.inkanno;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-
 
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
-import ch.unibe.eindermu.utils.Observer;
+import ch.unibe.eindermu.utils.NotImplementedException;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 
@@ -22,7 +21,7 @@ import ch.unibe.im2.inkanno.util.InvalidDocumentException;
  * @author emanuel
  *
  */
-public class DocumentManager extends AbstractObservable{
+public class DocumentManager extends AbstractObservable implements Iterable<Document>{
     public static final Aspect ON_DOCUMENT_CONSTRUCTED = new Aspect();
     public static final Aspect ON_NEW_DOCUMENT = new Aspect();
     /**
@@ -325,6 +324,40 @@ public class DocumentManager extends AbstractObservable{
             }
         }
         return l;
+    }
+
+    /**
+     * This methods allows to itterate over all documents of DocumentManager.
+     * Be aware that for now it is changing the internal state of DocumentManager. So 
+     * be sure not to use this method if the document manager is in use at the same time on 
+     * an other place.
+     * 
+     * Some generic information on this method: 
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator<Document> iterator() {
+        return new Iterator<Document>() {
+
+            @Override
+            public boolean hasNext() {
+                return DocumentManager.this.hasNext();
+            }
+
+            @Override
+            public Document next() {
+                try {
+                    return DocumentManager.this.nextDocument();
+                } catch (InvalidDocumentException e) {
+                    return null;
+                }
+            }
+
+            @Override
+            public void remove() {
+                throw new NotImplementedException();
+            }
+        };
     }   
 }
 

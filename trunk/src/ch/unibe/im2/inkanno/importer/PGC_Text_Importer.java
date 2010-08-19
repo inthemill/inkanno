@@ -1,4 +1,4 @@
-package ch.unibe.im2.inkanno;
+package ch.unibe.im2.inkanno.importer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.InkAnnoCanvas;
 import ch.unibe.inkml.InkCanvas;
 import ch.unibe.inkml.InkCanvasTransform;
 import ch.unibe.inkml.InkChannel;
@@ -21,10 +23,8 @@ import ch.unibe.inkml.InkMLComplianceException;
 import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceLeaf;
-import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.InkChannel.Name;
-import ch.unibe.inkml.InkTraceLeaf.PointConstructionBlock;
+import ch.unibe.inkml.InkChannel.ChannelName;
 import ch.unibe.inkml.util.ViewTreeManipulationException;
 
 public class PGC_Text_Importer implements StrokeImporter {
@@ -40,41 +40,42 @@ public class PGC_Text_Importer implements StrokeImporter {
     	
     	InkDefinitions definition = new InkDefinitions(ink);
     	ink.setDefinitions(definition);
-    	
-    	InkInkSource source = new InkInkSource(ink,"io2Source");
-    	source.setModel("IO2");
-    	source.setManufacturer("Logitech");
-        definition.enter(source);
-        try{
+    	try{
+        	InkInkSource source = new InkInkSource(ink,"io2Source");
+        	source.setModel("IO2");
+        	source.setManufacturer("Logitech");
+            definition.enter(source);
+        
 	        InkTraceFormat format = new InkTraceFormat(ink,"Logitechformat");
 	        InkChannel x = new InkChannelDouble(ink);
-	        x.setName(InkChannel.Name.X);
+	        x.setName(InkChannel.ChannelName.X);
 	        x.setOrientation(InkChannel.Orientation.P);
 	        format.addChannel(x);
 	        
 	        InkChannel y = new InkChannelDouble(ink);
-	        y.setName(InkChannel.Name.Y);
+	        y.setName(InkChannel.ChannelName.Y);
 	        y.setOrientation(InkChannel.Orientation.P);
 	        format.addChannel(y);
 	        
 	        InkChannel t = new InkChannelDouble(ink);
-	        t.setName(InkChannel.Name.T);
+	        t.setName(InkChannel.ChannelName.T);
 	        t.setOrientation(InkChannel.Orientation.P);
 	        format.addChannel(t);
 	        
 	        InkChannel f = new InkChannelInteger(ink);
-	        f.setName(InkChannel.Name.F);
+	        f.setName(InkChannel.ChannelName.F);
 	        f.setOrientation(InkChannel.Orientation.P);
 	        format.addChannel(f);
+	        format.setFinal();
 	        
 	        definition.enter(format);
-	        InkCanvas canvas = InkCanvas.createInkAnnoCanvas(ink); 
+	        InkCanvas canvas = new InkAnnoCanvas(ink); 
 	        definition.enter(canvas);
 	        InkCanvasTransform transform = InkCanvasTransform.getIdentityTransform(ink,"pgcToInkAnnoTransform",format,canvas.getTraceFormat());
 	        definition.enter(transform);
 	        
 	        InkContext context = new InkContext(ink,"maincontext");
-	        context.setInkSource(source);
+	        context.setInkSourceByRef(source);
 	        context.setTraceFormat(format);
 	        //context.setBrush(brush);
 	        context.setCanvas(canvas);
@@ -121,10 +122,10 @@ public class PGC_Text_Importer implements StrokeImporter {
                     @Override
                     public void addPoints() throws InkMLComplianceException {
                         for(int i = 0;i<xs.size();i++){
-                            set(Name.X,xs.get(i));
-                            set(Name.Y,ys.get(i));
-                            set(Name.T,ts.get(i));
-                            set(Name.F,fs.get(i));
+                            set(ChannelName.X,xs.get(i));
+                            set(ChannelName.Y,ys.get(i));
+                            set(ChannelName.T,ts.get(i));
+                            set(ChannelName.F,fs.get(i));
                             next();
                         }
                     }

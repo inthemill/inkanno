@@ -20,7 +20,7 @@
  * @author emanuel
  */
 
-package ch.unibe.im2.inkanno;
+package ch.unibe.im2.inkanno.importer;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 
 import ch.unibe.eindermu.utils.XmlHandler;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.InkAnnoCanvas;
 import ch.unibe.inkml.InkBrush;
 import ch.unibe.inkml.InkCanvas;
 import ch.unibe.inkml.InkCanvasTransform;
@@ -50,9 +51,7 @@ import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceGroup;
 import ch.unibe.inkml.InkTraceLeaf;
-import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.InkTraceLeaf.PointConstructionBlock;
 import ch.unibe.inkml.util.ViewTreeManipulationException;
 
 public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImporter{
@@ -128,7 +127,7 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
         return trace;
     }
     
-    private String channelNameToS(InkChannel.Name name){
+    private String channelNameToS(InkChannel.ChannelName name){
     	switch (name){
     	case X: return "x";
     	case Y :return "y";
@@ -152,40 +151,48 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
     	InkDefinitions definition = new InkDefinitions(ink);
     	ink.setDefinitions(definition);
     	
-    	source = new InkInkSource(ink,"ebeamSource");
-    	source.setModel("eBeam");
-    	source.setManufacturer("Luidia");
-    	source.setDescription("http://www.e-beam.com");
-        definition.enter(source);
+    	
         try {
+            source = new InkInkSource(ink,"ebeamSource");
+            source.setModel("eBeam");
+            source.setManufacturer("Luidia");
+            source.setDescription("http://www.e-beam.com");
+            definition.enter(source);
+            
 	        format = new InkTraceFormat(ink,"whiteboardFormat");
 	        InkChannel x = new InkChannelDouble(ink);
-	        x.setName(InkChannel.Name.X);
+	        x.setName(InkChannel.ChannelName.X);
 	        x.setOrientation(InkChannel.Orientation.P);
+	        x.setFinal();
 			format.addChannel(x);
+			
 	        InkChannel y = new InkChannelDouble(ink);
-	        y.setName(InkChannel.Name.Y);
+	        y.setName(InkChannel.ChannelName.Y);
 	        y.setOrientation(InkChannel.Orientation.P);
+	        y.setFinal();
 	        format.addChannel(y);
 	        
 	        InkChannel t = new InkChannelDouble(ink);
-	        t.setName(InkChannel.Name.T);
+	        t.setName(InkChannel.ChannelName.T);
 	        t.setOrientation(InkChannel.Orientation.P);
+	        t.setFinal();
 	        format.addChannel(t);
 	        
 	        InkChannel f = new InkChannelInteger(ink);
-	        f.setName(InkChannel.Name.F);
+	        f.setName(InkChannel.ChannelName.F);
 	        f.setOrientation(InkChannel.Orientation.P);
-	        format.addIntermittentChannel(f);
+	        f.setIntermittent(true);
+	        f.setFinal();
+	        format.addChannel(f);
         
 	        definition.enter(format);
-	        InkCanvas canvas = InkCanvas.createInkAnnoCanvas(ink); 
+	        InkCanvas canvas = new InkAnnoCanvas(ink); 
 	        definition.enter(canvas);
 	        transform = InkCanvasTransform.getIdentityTransform(ink,"whiteboardToInkAnnoTransform",format,canvas.getTraceFormat());
 	        definition.enter(transform);
 	        
 	        context = new InkContext(ink,"maincontext");
-	        context.setInkSource(source);
+	        context.setInkSourceByRef(source);
 	        context.setTraceFormat(format);
 	        //context.setBrush(brush);
 	        context.setCanvas(canvas);
@@ -209,24 +216,36 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
     }
     
     private InkBrush getBrush(String color){
-    	if(brushes.containsKey(color)){
-    		InkBrush brush =  brushes.get(color);
-    		if(this.context.getBrush().equals(brush)){
-    			return null;
-    		}
-    		return brush;
-    	}
-    	InkBrush b = new InkBrush(this.ink,"brush_"+color);
-    	if(color.equals("erase")){
-    		b.annotate(InkBrush.COLOR, InkBrush.COLOR_ERASER);
-    	}else{
-    		b.annotate(InkBrush.COLOR,color);
-    	}
-    	brushes.put(color,b);
-    	if(this.context.getBrush()==null){
-    		this.context.setBrush(b);
-    	}
-    	return getBrush(color);
+        if(brushes.containsKey(color)){
+            InkBrush brush =  brushes.get(color);
+            if(this.context.getBrush().equals(brush)){
+                return null;
+            }
+            return brush;
+        }else if(ink.getDefinitions().containsKey("brush_"+color)){
+            InkBrush brush =  (InkBrush) ink.getDefinitions().get("brush_"+color);
+            brushes.put(color,brush);
+            if(this.context.getBrush().equals(brush)){
+                return null;
+            }
+        }
+        InkBrush b;
+        try {
+            b = new InkBrush(this.ink,"brush_"+color);
+        } catch (InkMLComplianceException e) {
+            //We have already tested, will not occures
+            throw new Error(e);
+        }
+        if(color.equals("erase")){
+            b.annotate(InkBrush.COLOR, InkBrush.COLOR_ERASER);
+        }else{
+            b.annotate(InkBrush.COLOR,color);
+        }
+        brushes.put(color,b);
+        if(this.context.getBrush()==null){
+            this.context.setBrush(b);
+        }
+        return getBrush(color);
     }
     
 }

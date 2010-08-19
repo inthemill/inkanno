@@ -298,18 +298,18 @@ public class Selection extends AbstractObservable implements TreeSelectionModel{
         
         if(parent == null){
         	InkTraceView sc = this.doc.getCurrentViewRoot().createChildContainer(this.content);
-        	if(!text.equals("")){
+        	if(!text.isEmpty()){
         		sc.annotate("transcription",text);
         	}
-        	if(!type.equals("")) {
+        	if(!type.isEmpty()) {
                 sc.annotate("type", type);
             }
         }else {
         	InkTraceView sc = parent.createChildContainer(this.content);
-        	if(!text.equals("")){
+        	if(!text.isEmpty()){
         		sc.annotate("transcription",text);
         	}
-            if(!type.equals("")) {
+            if(!type.isEmpty()) {
                 sc.annotate("type", type);
             }
         }
@@ -349,7 +349,7 @@ public class Selection extends AbstractObservable implements TreeSelectionModel{
         String res = "";
         for(InkTraceView view : content) {
             String label = view.getAnnotation("transcription"); 
-            if(label != null && !label.equals("")) {
+            if(label != null && !label.isEmpty()) {
                 res += label.trim() + " ";
             }
         }

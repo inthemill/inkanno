@@ -26,26 +26,32 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
+import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.Config;
 import ch.unibe.im2.inkanno.DocumentRecognizer.FileType;
 import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
 import ch.unibe.im2.inkanno.exporter.ExporterFactory;
 import ch.unibe.im2.inkanno.exporter.FactoryException;
-import ch.unibe.im2.inkanno.exporter.StatisticsExporter;
 import ch.unibe.im2.inkanno.gui.GUI;
+import ch.unibe.im2.inkanno.gui.GUIMessenger;
+import ch.unibe.im2.inkanno.importer.InkMLImporter;
 import ch.unibe.im2.inkanno.util.DocumentRepair;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 import ch.unibe.im2.inkanno.util.ManualInteractionNeededException;
+import ch.unibe.inkml.InkCanvas;
 import ch.unibe.inkml.InkMLComplianceException;
 
 public class InkAnno extends AbstractInkAnnoMain {
-    public static final String APP_NAME = "inkanno"; //$NON-NLS-1$
+    
+    public static final String APP_NAME = "$name$"; //$NON-NLS-1$
+    
+    public static final String APP_VERSION = "$version$"; //$NON-NLS-1$
+    
+    public static final String CMD_OPT_VERSION = Strings.getString("InkAnno.cmd_opt_version"); //$NON-NLS-1$
+    
     public static final String CMD_OPT_ACTION = Strings.getString("InkAnno.cmd_opt_action"); //$NON-NLS-1$
     public static final String CMD_OPT_ACTION_GUI = Strings.getString("InkAnno.cmd_opt_action_gui"); //$NON-NLS-1$
     public static final String CMD_OPT_ACTION_REPAIR = Strings.getString("InkAnno.cmd_opt_action_repair"); //$NON-NLS-1$
@@ -61,8 +67,22 @@ public class InkAnno extends AbstractInkAnnoMain {
        }
        return InkAnno.instance;
     }
+    
+    
+    /**
+     * Main method of the application.
+     * @param args Command line arguments
+     */
+    public static void main(String[] args) {
+        InkAnno i = InkAnno.getInstance();
+        i.go(args);
+    }
+    
 
     private List<Exporter> exporters = new ArrayList<Exporter>();
+    
+    private InkCanvas defaultCanvas;
+    
     
     @Override
     public String getApplicationDescription() {
@@ -73,20 +93,11 @@ public class InkAnno extends AbstractInkAnnoMain {
     public String getApplicationName() {
         return APP_NAME;
     }
-    
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        InkAnno i = InkAnno.getInstance();
-        i.go(args);
-    }
 
-
-
+    @Override
     protected void buildConfig() {
         Config c = getConfig();
-        
+        c.addBooleanOption('v',CMD_OPT_VERSION,String.format(Strings.getString("InkAnno.cmd_opt_version_desc"),APP_NAME));
         // initialize different exporters
         exporters = (new ExporterFactory()).loadAvailableExporters();
         
@@ -119,41 +130,64 @@ public class InkAnno extends AbstractInkAnnoMain {
         c.nameOtherArg(INPUT);
     }
 
-    
+    @Override
     protected void start() throws FileNotFoundException, IOException{
-        Config c = getConfig();
-        if(hasGui()){
+        if(getConfig().getB(CMD_OPT_VERSION)){
+            System.out.println(APP_VERSION);
+            System.exit(0);
+        }
+        loadInkAnnoCanvas();
+        String command =  getConfig().get(CMD_OPT_ACTION);
+        if(command.equals(CMD_OPT_ACTION_GUI)){
             startGui();
-        }else if(c.get(CMD_OPT_ACTION).equals(CMD_OPT_ACTION_REPAIR)){
+        }else if(command.equals(CMD_OPT_ACTION_REPAIR)){
         	startRepair();
         }else{
             boolean executed = false;
             for(final Exporter exporter : exporters){
-                if(exporter.getID().equals(c.get(CMD_OPT_ACTION))){
+                if(exporter.getID().equals(command)){
                     try {
                         DocumentManager it = getDocumentManager(true);
                         exporter.setDocumentManager(it);
                         if(it.size() == 0){
-                            System.err.println("No input file has been specified"); 
+                            Messenger.error("No input file has been specified"); 
                             System.exit(1);
                         }
                         exporter.export();
                     } catch (ExporterException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
-                        System.err.println(String.format(Strings.getString("InkAnno.action_export_err"),e.getMessage())); //$NON-NLS-1$
+                        Messenger.error(String.format(Strings.getString("InkAnno.action_export_err"),e.getMessage())); //$NON-NLS-1$
                         System.exit(1);
                     }
                     executed = true;
                 }
             }
             if(!executed){
-                System.err.println(String.format(Strings.getString("InkAnno.cmd_opt_action_err_unkown"),c.get(CMD_OPT_ACTION))); //$NON-NLS-1$
+                Messenger.error(String.format(Strings.getString("InkAnno.cmd_opt_action_err_unkown"),command)); //$NON-NLS-1$
                 System.exit(1);
             }
         }
     }
+    
+    /**
+     * loads the canvas provided by inkanno. Which is located in the file 'InkAnnoInkMLCanvas.xml' 
+     * in the same package as this class.
+     * InkML sources that should be read by inkanno must be at least conform this canvas and its traceFormat.
+     */
+    private void loadInkAnnoCanvas(){
+        try {
+            InkMLImporter importer = new InkMLImporter((getClass().getResource("InkAnnoInkMLCanvas.inkml").openStream()));
+            defaultCanvas = (InkCanvas) importer.createInk().getDefinitions().get("inkAnnoCanvas");
+        } catch (Throwable e) {
+            Messenger.error(String.format("Can't load inkanno canvas: %s",e.getMessage()));
+            e.printStackTrace();
+            System.exit(1);
+        } 
+    }
+    
 
+    
     private void startRepair() throws IOException{
         DocumentManager it = getDocumentManager(true);
         while(it.hasNext()){
@@ -166,7 +200,7 @@ public class InkAnno extends AbstractInkAnnoMain {
                 continue;
             }
             if(d.getType() != FileType.INKML){
-                System.err.println(Strings.getString("InkAnno.action_repair_err_input")); //$NON-NLS-1$
+                Messenger.error(Strings.getString("InkAnno.action_repair_err_input")); //$NON-NLS-1$
                 System.exit(1);
             }
             DocumentRepair tc = new DocumentRepair(d);
@@ -179,15 +213,15 @@ public class InkAnno extends AbstractInkAnnoMain {
                 e1.printStackTrace();
                 System.exit(1);
             } catch (ManualInteractionNeededException e) {
-                System.err.println(e.getMessage());
+                Messenger.error(e.getMessage());
                 e.printStackTrace();
                 System.exit(1);
             }
             if(!res){
-                System.err.println(Strings.getString("InkAnno.action_repair_msg_no_job")); //$NON-NLS-1$
+                Messenger.error(Strings.getString("InkAnno.action_repair_msg_no_job")); //$NON-NLS-1$
             }
             File output = null;
-            if(getConfig().get(OUTPUT) != null && !getConfig().get(OUTPUT).equals("")){ //$NON-NLS-1$
+            if(getConfig().get(OUTPUT) != null && !getConfig().get(OUTPUT).isEmpty()){ //$NON-NLS-1$
                 output = new File(getConfig().get(OUTPUT));
             }else{
                 if(!res){
@@ -210,16 +244,17 @@ public class InkAnno extends AbstractInkAnnoMain {
 
 	private void startGui(){
         try {
+            Messenger.add(new GUIMessenger());
             DocumentManager it = getDocumentManager(true);
-            GUI gui = new GUI(it);
+            new GUI(it);
             if(it.hasNext()){
                 it.nextDocument();
             }
         } catch (IOException e) {
-            showError(String.format("Can't load document manager: %s",e.getMessage()));
+            Messenger.error(String.format("Can't load document manager: %s",e.getMessage()));
             System.exit(1);
         } catch (InvalidDocumentException e) {
-            showError(String.format("Can't load first document: %s",e.getMessage()));
+            Messenger.error(String.format("Can't load first document: %s",e.getMessage()));
             System.exit(1);
         }
     }
@@ -229,19 +264,8 @@ public class InkAnno extends AbstractInkAnnoMain {
 	public static Config config() {
 		return InkAnno.getInstance().getConfig();
 	}
-
-
 	
-	public void showError(String errorMessage){
-	    super.showError(errorMessage);
-        if(hasGui()){
-            JOptionPane.showMessageDialog(GUI.getInstance(), errorMessage, Strings.getString("InkAnno.err_io"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-        }
+	public InkCanvas getCanvas(){
+	    return this.defaultCanvas;
 	}
-
-    private boolean hasGui() {
-        return getConfig().get(CMD_OPT_ACTION).equals(CMD_OPT_ACTION_GUI);
-    }
-    
-    
 }

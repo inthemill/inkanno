@@ -22,7 +22,7 @@
  * @author emanuel
  * StrokeFilter.java
  */
-package ch.unibe.im2.inkanno;
+package ch.unibe.im2.inkanno.filter;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -35,7 +35,7 @@ import java.util.List;
 
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
-import ch.unibe.inkml.InkTracePoint;
+import ch.unibe.im2.inkanno.Document;
 import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewLeaf;
@@ -43,7 +43,15 @@ import ch.unibe.inkml.util.AbstractTraceFilter;
 import ch.unibe.inkml.util.Timespan;
 import ch.unibe.inkml.util.TraceBound;
 
-public class DefaultTraceFilter extends AbstractTraceFilter{
+/**
+ * This filter passes only the trace which have been created in the given timespan.
+ * Additionally the traces must not be coverd by an erasor stroke which has been created
+ * in the given timespan.
+ * @author emanuel
+ *
+ */
+
+public class TimeSpanEraserFilter extends AbstractTraceFilter{
     private double startTime = 0;
     private double endTime = Double.MAX_VALUE;
     private Document doc;
@@ -51,7 +59,7 @@ public class DefaultTraceFilter extends AbstractTraceFilter{
     private float factor;
     private List<InkTraceView> selectable;
     
-    public DefaultTraceFilter(Document document){
+    public TimeSpanEraserFilter(Document document){
         this.doc = document;
         this.generateErasers();
         doc.getCurrentViewRoot().registerFor(InkTraceView.ON_CHANGE, new Observer(){
@@ -150,7 +158,7 @@ public class DefaultTraceFilter extends AbstractTraceFilter{
         //for each eraser trace
         for(InkTraceViewLeaf eraser : buffs.keySet()) {
             //if this eraser trace is applicable
-            if(passTimeConstraint(eraser)) {
+            if(passTimeConstraint(eraser) && eraser.getTimeSpan().start > s.getTimeSpan().end) {
                 BufferedImage bf = buffs.get(eraser);
                 //for each point in the stroke
                 for(InkTracePoint p : ((InkTraceViewLeaf) s).pointIterable()) {

@@ -54,9 +54,12 @@ public class DocumentMenu{
         JMenuItem save = new JMenuItem("Save", new ImageIcon(this.getClass().getResource("images/Save16.gif")));
         save.setMnemonic(KeyEvent.VK_S);
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
-        save.setActionCommand(Contr.SAVE);
-        save.addActionListener(Contr.getInstance());
+        save.addActionListener(new Contr.Save());
         this.root.add(save);
+        
+        JMenuItem saveAs = new JMenuItem("Save As", new ImageIcon(this.getClass().getResource("images/Save16.gif")));
+        saveAs.addActionListener(new Contr.SaveAs());
+        this.root.add(saveAs);
         
         JMenuItem close = new JMenuItem("Close", new ImageIcon(this.getClass().getResource("images/Close16.png")));
         close.setActionCommand(Contr.CLOSE);

@@ -30,7 +30,6 @@ import ch.unibe.eindermu.utils.GraphicsBackup;
 import ch.unibe.im2.inkanno.gui.color.ColorizerManager;
 import ch.unibe.inkml.InkChannel;
 import ch.unibe.inkml.InkTracePoint;
-import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
@@ -82,9 +81,9 @@ public class GUITraceVisitor extends TraceGraphVisitor{
         double w = getStrokeWidth();
         List<InkTracePoint> ps  = s.getPoints();
         //if the Channel Force is present, we change the stroke width according to the writing force
-        if(s.getContext().getCanvasTraceFormat().containsChannel(InkChannel.Name.F)){
+        if(s.getContext().getCanvasTraceFormat().containsChannel(InkChannel.ChannelName.F)){
             for(int i = 1; i<s.getPoints().size();i++){
-                double f = (ps.get(i-1).get(InkChannel.Name.F) + ps.get(i).get(InkChannel.Name.F)) / 2.0;
+                double f = (ps.get(i-1).get(InkChannel.ChannelName.F) + ps.get(i).get(InkChannel.ChannelName.F)) / 2.0;
                 getGraphics().setStroke(new BasicStroke((float)(w*(0.5+(f/100.0))),BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 getGraphics().drawLine((int)ps.get(i-1).getX(),(int) ps.get(i-1).getY(), (int)ps.get(i).getX(), (int)ps.get(i).getY());
             }

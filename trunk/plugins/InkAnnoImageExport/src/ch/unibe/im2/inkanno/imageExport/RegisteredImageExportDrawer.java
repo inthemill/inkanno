@@ -1,8 +1,8 @@
 package ch.unibe.im2.inkanno.imageExport;
 
 import ch.unibe.eindermu.utils.Config;
-import ch.unibe.im2.inkanno.imageProcessing.TraceDrawVisitor;
 import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;
+import ch.unibe.im2.inkanno.imageProcessing.TraceDrawVisitor;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.util.AbstractTraceFilter;
 

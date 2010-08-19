@@ -165,7 +165,7 @@ public class MetaDataApplier extends AbstractInkAnnoMain {
         do{
            out.print("Coma separated list of Files: ");
            String[] files = sc.nextLine().split(",");
-           if(files.length == 1 && files[0].equals("")){
+           if(files.length == 1 && files[0].isEmpty()){
                break;
            }
            List<Document> documents = new ArrayList<Document>();
@@ -174,7 +174,7 @@ public class MetaDataApplier extends AbstractInkAnnoMain {
                while(!f.exists()){
                    out.print(String.format("File '%s' don't exist, correct it or ignore:",f.getPath()) );
                    file = sc.nextLine().trim();
-                   if(file.equals("")){
+                   if(file.isEmpty()){
                        f = null;
                        break;
                    }
@@ -195,7 +195,7 @@ public class MetaDataApplier extends AbstractInkAnnoMain {
                if(an.valueType!=ValueType.ENUM){
                    out.print("enter value for '"+key+"':");
                    value = sc.nextLine().trim();
-                   if(value.equals("")){
+                   if(value.isEmpty()){
                        out.println("ignoring..");
                        continue;
                    }
@@ -225,7 +225,7 @@ public class MetaDataApplier extends AbstractInkAnnoMain {
            }
            out.print("save files ?[Y|n] :");
            answer = sc.nextLine();
-           if(!answer.equals("") && answer.toLowerCase().charAt(0) == 'n'){
+           if(!answer.isEmpty() && answer.toLowerCase().charAt(0) == 'n'){
                out.println("Abort.");
                break;
            }
@@ -236,7 +236,7 @@ public class MetaDataApplier extends AbstractInkAnnoMain {
            }
            out.print("\ncontinue? [Y|n]: ");
            answer = sc.nextLine();
-        }while(answer.equals("") || answer.toLowerCase().charAt(0) != 'n');
+        }while(answer.isEmpty() || answer.toLowerCase().charAt(0) != 'n');
 
         out.println("exit");
     }

@@ -20,7 +20,7 @@
  * @author emanuel
  */
 
-package ch.unibe.im2.inkanno;
+package ch.unibe.im2.inkanno.importer;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ch.unibe.eindermu.utils.XmlHandler;
+import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.InkAnnoCanvas;
 import ch.unibe.inkml.InkBrush;
 import ch.unibe.inkml.InkCanvas;
 import ch.unibe.inkml.InkCanvasTransform;
@@ -45,11 +47,8 @@ import ch.unibe.inkml.InkInkSource;
 import ch.unibe.inkml.InkMLComplianceException;
 import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceLeaf;
-import ch.unibe.inkml.InkTracePoint;
-import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.InkChannel.Name;
 import ch.unibe.inkml.util.ViewTreeManipulationException;
 public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     
@@ -112,7 +111,7 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
         return trace;
     }
     
-    private String channelNameToS(InkChannel.Name name){
+    private String channelNameToS(InkChannel.ChannelName name){
     	switch (name){
     	case X: return "x";
     	case Y :return "y";
@@ -165,15 +164,15 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
         
         sourceFormat = new InkTraceFormat(ink,"inkannoTraceFormat");
         InkChannel x = new InkChannelDouble(ink);
-        x.setName(InkChannel.Name.X);
+        x.setName(InkChannel.ChannelName.X);
         sourceFormat.addChannel(x);
         
         InkChannel y = new InkChannelDouble(ink);
-        y.setName(InkChannel.Name.Y);
+        y.setName(InkChannel.ChannelName.Y);
         sourceFormat.addChannel(y);
         
         InkChannel t = new InkChannelDouble(ink);
-        t.setName(InkChannel.Name.T);
+        t.setName(InkChannel.ChannelName.T);
         sourceFormat.addChannel(t);
         
         /*InkChannel f = new InkChannelInteger(ink);
@@ -181,13 +180,13 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
         sourceFormat.addIntermittentChannel(f);
         */
         definition.enter(sourceFormat);
-        InkCanvas canvas = InkCanvas.createInkAnnoCanvas(ink); 
+        InkCanvas canvas = new InkAnnoCanvas(ink); 
         definition.enter(canvas);
         transform = InkCanvasTransform.getIdentityTransform(ink,"InkAnnoV1_2_InkAnnoV2Transform",sourceFormat,canvas.getTraceFormat());
         definition.enter(transform);
         
         context = new InkContext(ink,"maincontext");
-        context.setInkSource(inkSource);
+        context.setInkSourceByRef(inkSource);
         context.setTraceFormat(sourceFormat);
         //context.setBrush(brush);
         context.setCanvas(canvas);
@@ -205,6 +204,8 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     	}       
     }
 
+    
+    
     private InkBrush getBrush(String color){
     	if(brushes.containsKey(color)){
     		InkBrush brush =  brushes.get(color);
@@ -212,8 +213,20 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     			return null;
     		}
     		return brush;
+    	}else if(ink.getDefinitions().containsKey("brush_"+color)){
+    	    InkBrush brush =  (InkBrush) ink.getDefinitions().get("brush_"+color);
+    	    brushes.put(color,brush);
+    	    if(this.context.getBrush().equals(brush)){
+                return null;
+            }
     	}
-    	InkBrush b = new InkBrush(this.ink,"brush_"+color);
+    	InkBrush b;
+        try {
+            b = new InkBrush(this.ink,"brush_"+color);
+        } catch (InkMLComplianceException e) {
+            //We have already tested, will not occures
+            throw new Error(e);
+        }
     	if(color.equals("erase")){
     		b.annotate(InkBrush.COLOR, InkBrush.COLOR_ERASER);
     	}else{

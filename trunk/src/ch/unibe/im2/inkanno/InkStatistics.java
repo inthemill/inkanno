@@ -8,7 +8,6 @@ import java.util.List;
 
 import ch.unibe.im2.inkanno.util.Histogram;
 import ch.unibe.inkml.InkInk;
-import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.util.TraceViewFilter;
