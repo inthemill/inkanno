@@ -1,0 +1,133 @@
+<project name="InkAnno" default="jar" basedir=".">
+    <description>
+        Simple gui application that makes it easy to annotate
+        handwriting from outputfile of eBeam whiteboard and
+        Logitec IO Pen V1 as InkML
+    </description>
+    <!-- set global properties for this build -->
+    <property file="build.properties" />
+	<property name="preproc" value=".preproc" />
+	<path id="inkml.dir" location="${libinkml.dir}"/>
+		
+    
+    <target name="dirs">
+        <mkdir dir="${build}"/>
+    </target>
+
+	<target name="ownTasks" depends="compile">
+		<taskdef name="plugins"
+			classname="ch.unibe.im2.inkanno.util.PluginTask"
+			classpath="${build}" />
+	</target>
+	
+	<target name="preprocess">
+		<copy todir="${preproc}" >
+			<fileset dir="${src}">
+				<exclude name="**/.*"/>
+			</fileset>
+		</copy>
+		<property name="main" value="${preproc}/ch/unibe/im2/inkanno/InkAnno.java"/>
+        <replace file="${main}" token="$version$" value="${version}"/>
+	    <replace file="${main}" token="$name$" value="${name}"/>
+	</target>
+	
+    <target name="compile" depends="dirs,libInkML,preprocess" description="compile the source files">
+        <delete file="MANIFEST.MF"/>
+    	<javac srcdir="${preproc}" destdir="${build}" encoding="utf-8" debug="true">
+        	<classpath>
+                <pathelement path="${libinkml.jar}"/>
+        	</classpath>
+    	</javac>
+    	<copy todir="${build}/ch/unibe/im2/inkanno/icon">
+    		<fileset dir="${src}/ch/unibe/im2/inkanno/icon"/>
+    	</copy>
+    	<copy todir="${build}/ch/unibe/im2/inkanno/gui/images">
+    		<fileset dir="${src}/ch/unibe/im2/inkanno/gui/images"/>
+    	</copy>
+    	<copy todir="${build}/ch/unibe/im2/inkanno">
+    		<filelist dir="${src}/ch/unibe/im2/inkanno">
+    			  <file name="default_config.txt"/>
+    			  <file name="InkAnnoStructure.xml"/>
+    			  <file name="strings.properties"/>
+    		      <file name="InkAnnoInkMLCanvas.inkml"/>
+    		</filelist>
+    	</copy>
+    	<copy todir="${build}/ch/unibe/im2/inkanno/exporter" 
+    		file="${src}/ch/unibe/im2/inkanno/exporter/exporter_implementation.properties"/>
+    </target>
+	
+
+    <target name="jar" depends="compile,manifest">
+        <jar destfile="${name}.jar" basedir="${build}" manifest="MANIFEST.MF">
+            <fileset dir="${src}">
+        	   <exclude name="**/.*"/>
+        	</fileset>
+        </jar>
+    </target>
+	
+
+    <target name="all" depends="plugins,jar">
+	</target>
+
+	<target name="plugins" depends="compile,libInkML,ownTasks">
+	    <delete file="MANIFEST.MF"/>
+		<dirname file="${ant.file}" property="inkanno.dir"/>
+		<dirname file="${libinkml.jar}" property="tmp.libinkml.jar.dir"/>
+		<basename file="${libinkml.jar}" property="tmp.libinkml.jar.name"/>
+		<dirname file="${libinkml.dir}" property="tmp.libinkml.dir.dir"/>
+		<basename file="${libinkml.dir}" property="tmp.libinkml.dir.name"/>
+		
+		<plugins plugins="${plugins}">
+			<property name="plugin" value="@{plugin}"/>
+			<echo>${plugin}</echo>
+		</plugins>
+		<subant>
+			<property name="inkanno.dir" value="${inkanno.dir}"/>
+			<property name="inkanno.classpath" value="${inkanno.dir}/${build}"/>
+			<property name="libinkml.jar" value="${tmp.libinkml.jar.dir}/${tmp.libinkml.jar.name}"/>
+			<property name="libinkml.dir" value="${tmp.libinkml.dir.dir}/${tmp.libinkml.dir.name}"/>
+			<target name="jar"/>
+			<fileset dir="plugins" includes="*/build.xml"/>
+		</subant>
+	</target>
+	
+	<target name="manifest">
+	    <manifestclasspath property="plugin.classpath" jarfile="${name}.jar">
+			<classpath>
+			    <path location="${libinkml.jar}"/>
+			    <fileset dir="plugins" includes="*/*.jar" />
+			</classpath>
+		</manifestclasspath>
+	      <manifest file="MANIFEST.MF">
+	        <attribute name="Built-By" value="${user.name}"/>
+	        <attribute name="Main-Class" value="${mainclass}"/> 
+	        <attribute name="Class-Path" value="${plugin.classpath}"/>     
+	      </manifest>
+	</target>
+	
+	<target name="libInkML">
+        <ant dir="${libinkml.dir}" target="jar" inheritAll="false"/>
+	</target>
+	
+    <target name="clean">
+    	<delete dir="${build}"/>
+    	<delete dir="${preproc}"/>
+        <delete file="${name}.jar"/>
+        <delete file="${dist}.zip"/>
+    	<delete file="MANIFEST.MF"/>
+    	<delete file="MANIFEST-feature.MF"/>
+        <delete file="${name}-pdf-export.jar"/>
+		<subant>
+			<target name="clean"/>
+			<fileset dir="plugins" includes="*/build.xml"/>
+		</subant>
+    </target>
+
+    <target name="dist" depends="jar">
+        <zip destfile="${dist}.zip">
+            <zipfileset dir="." prefix="${dist}">
+                <exclude name="*${build}/"/>
+            </zipfileset>
+        </zip>
+    </target>
+</project>

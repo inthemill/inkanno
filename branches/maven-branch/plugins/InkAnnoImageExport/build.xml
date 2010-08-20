@@ -1,0 +1,46 @@
+<project name="InkAnnoImageExport" default="jar" basedir=".">
+    <description>
+        Plugin to Export InkML documents as images.
+    </description>
+    <!-- set global properties for this build -->
+    <property file="build.properties" />
+    
+    <target name="dirs">
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="dirs" description="compile the source files">
+    	<javac srcdir="${src}" destdir="${build}" encoding="utf-8" debug="true">
+        	<classpath>
+        		<pathelement path="${libinkml.jar}"/>
+                <pathelement path="${inkanno.classpath}"/>      		
+    			<pathelement path="${jai_codec_jar}"/>
+                <pathelement path="${jai_core_jar}"/>
+        	</classpath>
+    	</javac>
+    	<copy todir="${build}/ch/unibe/im2/inkanno/exporter">
+    		<filelist dir="${src}/ch/unibe/im2/inkanno/exporter">
+    			  <file name="exporter_implementation.properties"/>
+    		</filelist>
+    	</copy>
+    </target>
+	
+	<target name="jar" depends="compile,manifest">
+	      <jar destfile="${name}.jar" basedir="${build}" manifest="MANIFEST.MF">
+	            <fileset dir="${src}"/>
+	        </jar>
+	</target>
+	
+	<target name="manifest">
+        <manifest file="MANIFEST.MF">
+        	<attribute name="Built-By" value="${user.name}"/>
+        	<attribute name="Class-Path" value="${jai_codec_jar} ${jai_core_jar}"/>     
+    	</manifest>
+	</target>
+	
+    <target name="clean">
+    	<delete dir="${build}"/>
+        <delete file="${name}.jar"/>
+    	<delete file="MANIFEST.MF"/>
+    </target>
+</project>
