@@ -18,7 +18,7 @@
         	</classpath>
     	</javac>
     	<copy todir="${build}/ch/unibe/im2/inkanno/exporter">
-    		<filelist dir="${src}/ch/unibe/im2/exporter">
+    		<filelist dir="${src}/ch/unibe/im2/inkanno/exporter">
     			  <file name="exporter_implementation.properties"/>
     		</filelist>
     	</copy>

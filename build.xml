@@ -1,4 +1,5 @@
 <project name="InkAnno" default="jar" basedir=".">
+	
     <description>
         Simple gui application that makes it easy to annotate
         handwriting from outputfile of eBeam whiteboard and
@@ -14,12 +15,6 @@
         <mkdir dir="${build}"/>
     </target>
 
-	<target name="ownTasks" depends="compile">
-		<taskdef name="plugins"
-			classname="ch.unibe.im2.inkanno.util.PluginTask"
-			classpath="${build}" />
-	</target>
-	
 	<target name="preprocess">
 		<copy todir="${preproc}" >
 			<fileset dir="${src}">
@@ -55,8 +50,9 @@
     	<copy todir="${build}/ch/unibe/im2/inkanno/exporter" 
     		file="${src}/ch/unibe/im2/inkanno/exporter/exporter_implementation.properties"/>
     </target>
-	
 
+	
+	
     <target name="jar" depends="compile,manifest">
         <jar destfile="${name}.jar" basedir="${build}" manifest="MANIFEST.MF">
             <fileset dir="${src}">
@@ -69,7 +65,7 @@
     <target name="all" depends="plugins,jar">
 	</target>
 
-	<target name="plugins" depends="compile,libInkML,ownTasks">
+	<target name="plugins" depends="compile,libInkML">
 	    <delete file="MANIFEST.MF"/>
 		<dirname file="${ant.file}" property="inkanno.dir"/>
 		<dirname file="${libinkml.jar}" property="tmp.libinkml.jar.dir"/>
@@ -77,10 +73,6 @@
 		<dirname file="${libinkml.dir}" property="tmp.libinkml.dir.dir"/>
 		<basename file="${libinkml.dir}" property="tmp.libinkml.dir.name"/>
 		
-		<plugins plugins="${plugins}">
-			<property name="plugin" value="@{plugin}"/>
-			<echo>${plugin}</echo>
-		</plugins>
 		<subant>
 			<property name="inkanno.dir" value="${inkanno.dir}"/>
 			<property name="inkanno.classpath" value="${inkanno.dir}/${build}"/>
