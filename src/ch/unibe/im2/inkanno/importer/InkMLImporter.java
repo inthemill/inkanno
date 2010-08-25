@@ -52,13 +52,13 @@ public class InkMLImporter extends XmlHandler implements StrokeImporter {
             //for each trace create a traceView and add it to the virutalInkTraceContainer
             for (InkTrace trace: ink.getTraces()){
                 InkTraceViewLeaf viewLeaf = new InkTraceViewLeaf(ink, tvc);
-                viewLeaf.setTraceDataRef(trace.getIdNow("t"));
+                viewLeaf.setTraceDataRef(trace.getIdNow(InkTraceLeaf.ID_PREFIX));
                 tvc.addByBackdoor(viewLeaf);
                 if(viewLeaf.isLeaf()){
                     leafs.add((InkTraceLeaf)trace);
                 }
             }
-            //remove all views that are allready present in a trace view
+            //remove all views that are allready present in a trace view tree
             for(InkTraceView root : ink.getViewRoots()){
                 root.accept(new TraceVisitor(){
                     @Override

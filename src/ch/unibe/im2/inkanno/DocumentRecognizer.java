@@ -34,6 +34,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ch.unibe.im2.inkanno.importer.IAMonDBImporter;
 import ch.unibe.im2.inkanno.importer.InkAnnoStrokeImporter;
 import ch.unibe.im2.inkanno.importer.InkMLImporter;
 import ch.unibe.im2.inkanno.importer.PGC_Text_Importer;
@@ -43,7 +44,15 @@ import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 
 public class DocumentRecognizer extends DefaultHandler{
     
-	public enum FileType { WHITEBOARD, LOGITECH_PEN_V1,  LOGITECH_PEN_V2, LOGITECH_PEN_V2_TRANSFORMED , INK_ANNO, INKML, PGC_CUSTOM};
+	public enum FileType { 
+		WHITEBOARD,
+		IAM_ON_DB,
+		LOGITECH_PEN_V1,  
+		LOGITECH_PEN_V2, 
+		LOGITECH_PEN_V2_TRANSFORMED , 
+		INK_ANNO, 
+		INKML, 
+		PGC_CUSTOM};
     
     private FileType result;
     
@@ -54,6 +63,8 @@ public class DocumentRecognizer extends DefaultHandler{
     public StrokeImporter getStrokeImporter(File file) throws IOException, InvalidDocumentException {
         this.loadFromFile(file);
         switch (result){
+        	case IAM_ON_DB:
+        		return new IAMonDBImporter(file);
         	case WHITEBOARD:
         		return new WhiteboardStrokeImporter(file);
         	case INK_ANNO:
@@ -109,7 +120,14 @@ public class DocumentRecognizer extends DefaultHandler{
         this.counter++;
         if(qName.equals("WhiteboardCaptureSession")) {
             result = FileType.WHITEBOARD;
-            throw new SAXException("success");
+            //throw new SAXException("success");
+        }
+        if(result == FileType.WHITEBOARD && qName.equals("Transcription")){
+        	result = FileType.IAM_ON_DB;
+        	throw new SAXException("success");
+        }
+        if(result == FileType.WHITEBOARD && qName.equals("Stroke")){
+        	throw new SAXException("success");
         }
         if(qName.equals("InkAnno")) {
             this.result = FileType.INK_ANNO;
