@@ -35,13 +35,13 @@ import org.w3c.dom.NodeList;
 
 import ch.unibe.eindermu.utils.XmlHandler;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.InkAffineMapping;
 import ch.unibe.inkml.InkAnnoCanvas;
 import ch.unibe.inkml.InkBrush;
 import ch.unibe.inkml.InkCanvas;
 import ch.unibe.inkml.InkCanvasTransform;
 import ch.unibe.inkml.InkChannel;
 import ch.unibe.inkml.InkChannelDouble;
-import ch.unibe.inkml.InkChannelInteger;
 import ch.unibe.inkml.InkContext;
 import ch.unibe.inkml.InkDefinitions;
 import ch.unibe.inkml.InkInk;
@@ -59,7 +59,6 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
 	/**
 	 * List of strokes
 	 */
-    private NodeList nl;
     
     private InkTraceFormat format;
     private Map<String,InkBrush> brushes = new HashMap<String,InkBrush>();
@@ -68,7 +67,7 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
 
 	private InkInkSource source;
 	
-	private InkInk ink;
+	protected InkInk ink;
 	
 	private InkContext context;
 
@@ -77,8 +76,8 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
     	//Parse XML
         super.loadFromFile(file);
         //Retrieve Strokes
-        this.nl = this.getDocument().getElementsByTagName("Stroke");
-        if(this.nl.getLength() == 0) {
+        
+        if(getDocument().getElementsByTagName("Stroke").getLength() == 0) {
             throw new InvalidDocumentException("The document contains no strokes. It's makes no sense to open it");
         }
     }
@@ -88,10 +87,11 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
      * @return A list of Strokes
      * @throws InkMLComplianceException 
      */
-    private List<InkTraceLeaf> getStrokes() throws InkMLComplianceException {
+    private List<InkTraceLeaf> getTraces() throws InkMLComplianceException {
         List<InkTraceLeaf> strokes = new LinkedList<InkTraceLeaf>();
-        for(int i = 0; i < this.nl.getLength(); i++) {
-            strokes.add(this.nodeToStroke(this.nl.item(i)));
+        NodeList nl = this.getDocument().getElementsByTagName("Stroke");
+        for(int i = 0; i < nl.getLength(); i++) {
+            strokes.add(this.nodeToTrace(nl.item(i)));
         }
         return strokes;
     }
@@ -102,7 +102,7 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
      * @return
      * @throws InkMLComplianceException 
      */
-    private InkTraceLeaf nodeToStroke(Node strokeNode) throws InkMLComplianceException {
+    protected InkTraceLeaf nodeToTrace(Node strokeNode) throws InkMLComplianceException {
     	Element s = (Element) strokeNode;
     	InkBrush b = getBrush((s.getAttribute("colour")!= null)?s.getAttribute("colour"):"");
 		final InkTraceLeaf trace = new InkTraceLeaf(this.ink,null);
@@ -111,9 +111,7 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
 		if(b!=null){
 			trace.setBrush(b);
 		}
-		
-		
-        final NodeList l = s.getElementsByTagName("Point");
+		final NodeList l = s.getElementsByTagName("Point");
         trace.addPoints(trace.new PointConstructionBlock(l.getLength()){
             @Override
             public void addPoints() {
@@ -144,75 +142,75 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
         return false;
     }
     
-    public void importTo(ch.unibe.im2.inkanno.Document doc) throws InvalidDocumentException {
-    	ink = new InkInk();
-    	doc.setInk(ink);
-    	
+    public void initializeDefinitions() throws InkMLComplianceException{
     	InkDefinitions definition = new InkDefinitions(ink);
     	ink.setDefinitions(definition);
     	
+        source = new InkInkSource(ink,"ebeamSource");
+        source.setModel("eBeam");
+        source.setManufacturer("Luidia");
+        source.setDescription("http://www.e-beam.com");
+        definition.enter(source);
+        
+        format = new InkTraceFormat(ink,"whiteboardFormat");
+        InkChannel x = new InkChannelDouble(ink);
+        x.setName(InkChannel.ChannelName.X);
+        x.setOrientation(InkChannel.Orientation.P);
+        x.setFinal();
+		format.addChannel(x);
+		
+        InkChannel y = new InkChannelDouble(ink);
+        y.setName(InkChannel.ChannelName.Y);
+        y.setOrientation(InkChannel.Orientation.P);
+        y.setFinal();
+        format.addChannel(y);
+        
+        InkChannel t = new InkChannelDouble(ink);
+        t.setName(InkChannel.ChannelName.T);
+        t.setOrientation(InkChannel.Orientation.P);
+        t.setFinal();
+        format.addChannel(t);
+        
+        format.setFinal();
+        
+        definition.enter(format);
+        InkCanvas canvas = new InkAnnoCanvas(ink); 
+        definition.enter(canvas);
+        transform = new InkCanvasTransform(ink);
+        InkAffineMapping mapping = InkAffineMapping.createIdentityInkAffinMapping(ink,format,canvas.getTraceFormat());
+        transform.setForewardMapping(mapping);
+        
+        //transform = InkCanvasTransform.getIdentityTransform(ink,"whiteboardToInkAnnoTransform",format,canvas.getTraceFormat());
+        definition.enter(transform);
+        
+        context = new InkContext(ink,"maincontext");
+        context.setInkSourceByRef(source);
+        context.setTraceFormat(format);
+        //context.setBrush(brush);
+        context.setCanvas(canvas);
+        context.setCanvasTransform(transform);
+        ink.setCurrentContext(context);
+    } 
+    
+    
+    public void importTo(ch.unibe.im2.inkanno.Document doc) throws InvalidDocumentException {
+    	ink = new InkInk();
+    	doc.setInk(ink);
+    	try {
+    		initializeDefinitions();
     	
-        try {
-            source = new InkInkSource(ink,"ebeamSource");
-            source.setModel("eBeam");
-            source.setManufacturer("Luidia");
-            source.setDescription("http://www.e-beam.com");
-            definition.enter(source);
-            
-	        format = new InkTraceFormat(ink,"whiteboardFormat");
-	        InkChannel x = new InkChannelDouble(ink);
-	        x.setName(InkChannel.ChannelName.X);
-	        x.setOrientation(InkChannel.Orientation.P);
-	        x.setFinal();
-			format.addChannel(x);
-			
-	        InkChannel y = new InkChannelDouble(ink);
-	        y.setName(InkChannel.ChannelName.Y);
-	        y.setOrientation(InkChannel.Orientation.P);
-	        y.setFinal();
-	        format.addChannel(y);
-	        
-	        InkChannel t = new InkChannelDouble(ink);
-	        t.setName(InkChannel.ChannelName.T);
-	        t.setOrientation(InkChannel.Orientation.P);
-	        t.setFinal();
-	        format.addChannel(t);
-	        
-	        InkChannel f = new InkChannelInteger(ink);
-	        f.setName(InkChannel.ChannelName.F);
-	        f.setOrientation(InkChannel.Orientation.P);
-	        f.setIntermittent(true);
-	        f.setFinal();
-	        format.addChannel(f);
+			this.getTraces();
+		
         
-	        definition.enter(format);
-	        InkCanvas canvas = new InkAnnoCanvas(ink); 
-	        definition.enter(canvas);
-	        transform = InkCanvasTransform.getIdentityTransform(ink,"whiteboardToInkAnnoTransform",format,canvas.getTraceFormat());
-	        definition.enter(transform);
-	        
-	        context = new InkContext(ink,"maincontext");
-	        context.setInkSourceByRef(source);
-	        context.setTraceFormat(format);
-	        //context.setBrush(brush);
-	        context.setCanvas(canvas);
-	        context.setCanvasTransform(transform);
-	        this.getStrokes();
-	        
-           for(InkTrace trace : ink.getTraces()){
-                InkTraceViewLeaf l = new InkTraceViewLeaf(ink,ink.getViewRoot());
-                l.setTraceDataRef(trace.getIdNow("t"));
-                ink.getViewRoot().addTrace(l);
-            }
-
-        
+			for(InkTrace trace : ink.getTraces()){
+				((InkTraceLeaf) trace).createView(ink.getViewRoot());
+			}
         } catch (InkMLComplianceException e) {
 			throw new InvalidDocumentException(e.getMessage());
 		} catch (ViewTreeManipulationException e) {
             e.printStackTrace();
             throw new InvalidDocumentException("A View Tree ManipulationException has been raised, this should not happen.");
         }
-        
     }
     
     private InkBrush getBrush(String color){

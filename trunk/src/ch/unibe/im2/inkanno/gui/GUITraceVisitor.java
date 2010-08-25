@@ -84,6 +84,9 @@ public class GUITraceVisitor extends TraceGraphVisitor{
         if(s.getContext().getCanvasTraceFormat().containsChannel(InkChannel.ChannelName.F)){
             for(int i = 1; i<s.getPoints().size();i++){
                 double f = (ps.get(i-1).get(InkChannel.ChannelName.F) + ps.get(i).get(InkChannel.ChannelName.F)) / 2.0;
+                if(Double.isNaN(f)){
+                	f = 127;
+                }
                 getGraphics().setStroke(new BasicStroke((float)(w*(0.5+(f/100.0))),BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 getGraphics().drawLine((int)ps.get(i-1).getX(),(int) ps.get(i-1).getY(), (int)ps.get(i).getX(), (int)ps.get(i).getY());
             }

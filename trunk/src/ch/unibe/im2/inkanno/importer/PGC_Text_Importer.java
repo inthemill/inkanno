@@ -136,7 +136,7 @@ public class PGC_Text_Importer implements StrokeImporter {
 
 			for(InkTrace trace : ink.getTraces()){
 			    InkTraceViewLeaf l = new InkTraceViewLeaf(ink,ink.getViewRoot());
-			    l.setTraceDataRef(trace.getIdNow("t"));
+			    l.setTraceDataRef(trace.getIdNow(InkTraceLeaf.ID_PREFIX));
 			    ink.getViewRoot().addTrace(l);
 			}
 			
