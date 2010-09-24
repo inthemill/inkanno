@@ -6,6 +6,8 @@ package ch.unibe.im2.inkanno.exporter;
 import java.io.File;
 import java.io.OutputStream;
 
+import javax.swing.JFileChooser;
+
 import ch.unibe.eindermu.utils.Config;
 import ch.unibe.eindermu.utils.FileUtil;
 import ch.unibe.eindermu.utils.FileUtil.FileInfo;
@@ -234,4 +236,9 @@ public abstract class AbstractExporter implements Exporter {
      */
     public abstract String getDefaultFileNameExtension();
     
+    
+    @Override
+    public JFileChooser getCustomFileChooser(Document doc) {
+        return null;
+    }
 }

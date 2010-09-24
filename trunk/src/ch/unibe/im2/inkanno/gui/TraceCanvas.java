@@ -21,13 +21,16 @@
  */
 package ch.unibe.im2.inkanno.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
@@ -161,13 +164,17 @@ public class TraceCanvas extends Component implements Observable, Observer{
     public void paint(Graphics gr) {
         Graphics2D g = (Graphics2D) gr;
         GraphicsBackup gb = new GraphicsBackup(g);
-        if(hasDocument() && af != null) {
+        if(hasDocument() && getAffineTransform() != null) {
             g.drawString(getDocument().getName(), 5, 15);
-            g.transform(af);
+            
+            g.transform(getAffineTransform());
+            
             strokeVisitor.setStrokeWidth(getStrokeWeight());
             strokeVisitor.setGraphics(g);
             //strokeVisitor.visitAll(getDocument().getVirtualViews());
             strokeVisitor.go(getDocument().getCurrentViewRoot());
+            
+            
         }
         gb.reset();
         this.observerSupporter.notifyObserver(ON_PAINT,g);
@@ -177,32 +184,32 @@ public class TraceCanvas extends Component implements Observable, Observer{
         return this.af;
     }
     
-    public Point transform(final int x, final int y) {
+    public Point2D transform(final double x, final double y) {
         Point2D ptDst = new Point2D.Double();
         this.getAffineTransform().transform(new Point2D(){
             public double getX() {
-                return (double) x;
+                return x;
             }
             
             public double getY() {
-                return (double) y;
+                return y;
             }
             
             public void setLocation(double x, double y) {}
         }, ptDst);
-        return new Point((int) ptDst.getX(), (int) ptDst.getY());
+        return ptDst;
     }
     
-    public Point retransform(final int x, final int y) {
+    public Point2D retransform(final double x, final double y) {
         Point2D ptDst = new Point2D.Double();
         try {
             this.getAffineTransform().inverseTransform(new Point2D(){
                 public double getX() {
-                    return (double) x;
+                    return x;
                 }
                 
                 public double getY() {
-                    return (double) y;
+                    return y;
                 }
                 
                 public void setLocation(double x, double y) {}
@@ -211,7 +218,7 @@ public class TraceCanvas extends Component implements Observable, Observer{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return new Point((int) ptDst.getX(), (int) ptDst.getY());
+        return ptDst;
     }
 
     public void registerFor(Aspect event, Observer o) {
