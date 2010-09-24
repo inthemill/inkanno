@@ -39,7 +39,7 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
     	ink = new InkInk();
     	document.setInk(ink);
     	Pattern idPattern  = Pattern.compile("^([^-]+)-(\\d+)([a-z]?)-([^-]+)$");
-    	File dbdir = file.getParentFile().getParentFile().getParentFile().getParentFile();
+    	File dbdir = file.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile();
     	try {
     		initializeDefinitions();
     	
@@ -58,7 +58,7 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
     			
     			InkTraceViewContainer textLine = new InkTraceViewContainer(ink,textBlock);
     			textLine.annotate(InkAnnoAnnotationStructure.TYPE, "Textline");
-    			textLine.annotate("transcription",e.getAttribute("text"));
+    			textLine.annotate("transcription",e.getAttribute("text").replace("&quot;","\"").replace("&apos;","'"));
     			
                 String id = e.getAttribute("id");
                 Matcher m = idPattern.matcher(id);
@@ -67,6 +67,12 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
                 		+File.separator+m.group(1)
                 		+File.separator+m.group(1)+"-"+m.group(2)
                 		+File.separator+m.group(1)+"-"+m.group(2)+m.group(3)+"-"+m.group(4)+".xml");
+                	if(!linefile.exists()){
+                	    linefile = new File(dbdir.getPath()+File.separator+"lineStrokes"
+                            +File.separator+m.group(1)
+                            +File.separator+m.group(1)+"-"+m.group(2)
+                            +File.separator+m.group(1)+"-"+m.group(2)+"z-"+m.group(4)+".xml");
+                	}
                 	LineDoc ld= new LineDoc();
                 	ld.loadFromFile(linefile);
                 	NodeList lineStrokeNodes = ld.getDocument().getElementsByTagName("Stroke");

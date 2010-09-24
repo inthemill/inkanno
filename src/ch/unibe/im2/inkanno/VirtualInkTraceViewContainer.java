@@ -24,8 +24,15 @@ public class VirtualInkTraceViewContainer extends InkTraceViewContainer {
     /**
      * @param ink
      */
+    
+    private boolean open = true;
+    
     public VirtualInkTraceViewContainer(InkInk ink) {
         super(ink);
+    }
+    
+    public void setFinal(boolean isFinal){
+        open = !isFinal;
     }
     
     @Override
@@ -40,19 +47,14 @@ public class VirtualInkTraceViewContainer extends InkTraceViewContainer {
         // a virtual InkTraceViewContainer will never be stored to InkML see class description
     }
     
-    public void add(List<InkTraceView> viewList) throws ViewTreeManipulationException {
-        throw new ViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
-        		" hidden in other view trees.");
-    }
-    
     public void addTrace(InkTraceView tv) throws ViewTreeManipulationException {
-        throw new ViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
-        " hidden in other view trees.");
+        if(open){
+            super.addTrace(tv);    
+        }else{
+            throw new ViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
+                " hidden in other view trees.");
+        }
     }
-
-    public void addByBackdoor(InkTraceViewLeaf viewLeaf) throws ViewTreeManipulationException {
-        super.addTrace(viewLeaf);
-    } 
     
 
 }

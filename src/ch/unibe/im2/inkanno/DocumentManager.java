@@ -63,6 +63,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         }
     }
     
+    
     public DocumentManager(List<String> fileList,InkAnnoAnnotationStructure structure, boolean loadOnlyCurrent){
         this.structure = structure;
         files = fileList;
@@ -160,9 +161,9 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
      * @param path
      * @throws InvalidDocumentException 
      */
-    public void setCurrentDocument(String path) throws InvalidDocumentException {
+    public Document setCurrentDocument(String path) throws InvalidDocumentException {
         if(files.contains(path)){
-            setCurrentDocument(files.indexOf(path));
+            return setCurrentDocument(files.indexOf(path));
         }else{
             throw new InvalidDocumentException(String.format("Document with path '%s' is not managed any more.",path));
         }

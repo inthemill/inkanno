@@ -23,6 +23,7 @@
 package ch.unibe.im2.inkanno.controller;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -31,6 +32,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +110,7 @@ public class CanvasController implements MouseListener, MouseMotionListener, Key
     }
     
     private InkTraceView findStroke(int px, int py) {
-        Point p = this.canvas.retransform(px, py);
+        Point2D p = this.canvas.retransform(px, py);
         InkTraceView stroke = null;
         double dist = Double.MAX_VALUE;
         double near = this.gui.getCurrentDocument().getMostCommonTraceHeight();
@@ -154,7 +157,8 @@ public class CanvasController implements MouseListener, MouseMotionListener, Key
             return;
         }
         if(this.mouseBox.dragged) {
-            Rectangle testrect = new Rectangle(this.canvas.retransform(this.mouseBox.x, this.mouseBox.y));
+            Rectangle2D testrect = new Rectangle2D.Double();
+            testrect.setFrame(this.canvas.retransform(this.mouseBox.x, this.mouseBox.y),new Dimension(0,0));
             testrect.add(this.canvas.retransform(this.mouseBox.x + this.mouseBox.width, this.mouseBox.y + this.mouseBox.height));
             if(!this.mouseBox.add) {
                 this.getSelection().clear();

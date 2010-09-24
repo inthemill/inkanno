@@ -53,7 +53,6 @@ public class InkMLImporter extends XmlHandler implements StrokeImporter {
             for (InkTrace trace: ink.getTraces()){
                 InkTraceViewLeaf viewLeaf = new InkTraceViewLeaf(ink, tvc);
                 viewLeaf.setTraceDataRef(trace.getIdNow(InkTraceLeaf.ID_PREFIX));
-                tvc.addByBackdoor(viewLeaf);
                 if(viewLeaf.isLeaf()){
                     leafs.add((InkTraceLeaf)trace);
                 }
@@ -68,6 +67,7 @@ public class InkMLImporter extends XmlHandler implements StrokeImporter {
                         }
                     }});
             }
+            tvc.setFinal(true);
             ink.addView(tvc);
             //add all the traces which are not present in any of the normal view trees
             //to the default view tree.

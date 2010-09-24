@@ -28,8 +28,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
+import ch.unibe.eindermu.utils.NumberList;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
@@ -86,7 +88,7 @@ public class Document extends AbstractObservable{
 
 	//private double strokeWeight = 15;
 
-    private int mostCommonTraceHeight;
+    private double mostCommonTraceHeight;
 
     
     private InkAnnoAnnotationStructure annotationStructure; 
@@ -168,7 +170,21 @@ public class Document extends AbstractObservable{
         }
         h.smooth(2);
     	//this.averageTraceHeight = this.averageTraceHeight / this.getInk().getFlatTraces().size();
-    	this.mostCommonTraceHeight = h.getMaxIndex();
+    	List<Integer> indexes = h.getOrderedMaxima();
+    	if(indexes.size() > 1){
+    	    this.mostCommonTraceHeight = Math.min(indexes.get(0), indexes.get(1));
+    	}else{
+    	    this.mostCommonTraceHeight = indexes.get(0);
+    	}
+    	
+    	
+    	NumberList<Double> ds = new NumberList.Double();
+    	for(InkTrace stroke : this.getInk().getFlatTraces()){
+    	    if((int)mostCommonTraceHeight == (int) stroke.getBounds().height){
+    	        ds.add(stroke.getBounds().height);
+    	    }
+        }
+    	this.mostCommonTraceHeight = ds.getMean();
     }
     
  
@@ -276,7 +292,7 @@ public class Document extends AbstractObservable{
 	}
 
 
-    public int getMostCommonTraceHeight() {
+    public double getMostCommonTraceHeight() {
         return this.mostCommonTraceHeight;
     }
 
