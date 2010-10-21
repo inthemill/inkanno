@@ -359,6 +359,6 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
                 throw new NotImplementedException();
             }
         };
-    }   
+    }
 }
 

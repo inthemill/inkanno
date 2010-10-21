@@ -1,7 +1,7 @@
 /*
  * Created on 23.07.2007
  *
- * Copyright (C) 2007  Emanuel Indermühle <emanuel@inthemill.ch>
+ * Copyright (C) 2007  Emanuel Indermühle <eindermu@iam.unibe.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.NumberList;
@@ -49,6 +48,7 @@ import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
+import ch.unibe.inkml.util.TraceViewFilter;
 
 /**
  * Document handles access to inkml document. It has methods
@@ -73,7 +73,7 @@ public class Document extends AbstractObservable{
     //private double averageTraceHeight;
     
     private boolean isSaved = true;
-    private TimeSpanEraserFilter traceFilter;
+    private TraceViewFilter traceFilter;
     private Selection selection;
 
     private String name;
@@ -216,12 +216,17 @@ public class Document extends AbstractObservable{
     }
 
 
-    public TimeSpanEraserFilter getTraceFilter(){
+    public TraceViewFilter getTraceFilter(){
         if(traceFilter == null){
             traceFilter = new TimeSpanEraserFilter(this);
         }
         return traceFilter;
     }
+    
+    public void setTraceFilter(TraceViewFilter filter){
+        traceFilter = filter;
+    }
+    
     public Selection getSelection(){
         if(selection == null){
             selection = new Selection(this);

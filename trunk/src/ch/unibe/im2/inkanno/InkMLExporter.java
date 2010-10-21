@@ -18,22 +18,13 @@ public class InkMLExporter extends XmlHandler implements Exporter {
 	private File file;
 	private OutputStream stream;
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	public void setDocument(Document document) {
 		this.doc = document;
 	}
-	/**
-	 * {@inheritDoc}
-	 */
 	public void setFile(File file){
 	    this.file = file;
 	}
 	
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setStream(OutputStream stream) {
         this.stream = stream;
@@ -41,41 +32,25 @@ public class InkMLExporter extends XmlHandler implements Exporter {
 	
 	
 	private void buildXMLDocument() throws ParserConfigurationException, InkMLComplianceException{
-		this.createNewDocument();
+		this.createNewXMLDocument();
 		this.doc.getInk().exportToInkML(this.getDocument());
 	}
 
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
     @Override
     public void addCommandLineOptions(Config c) {
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public String getDescription() {
         return Strings.getString("InkAnno.cmd_opt_action_export_inkml_desc"); //$NON-NLS-1$
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public String getID() {
         return Strings.getString("InkAnno.cmd_opt_action_export_inkml"); //$NON-NLS-1$
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
     @Override
     public void export() throws ExporterException{
         if(doc == null){

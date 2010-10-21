@@ -36,6 +36,7 @@ import java.util.List;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Document;
+import ch.unibe.inkml.InkInk;
 import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewLeaf;
@@ -57,7 +58,9 @@ public class TimeSpanEraserFilter extends AbstractTraceFilter{
     private Document doc;
     private HashMap<InkTraceViewLeaf, BufferedImage> buffs = new HashMap<InkTraceViewLeaf, BufferedImage>();
     private float factor;
+    
     private List<InkTraceView> selectable;
+    private InkInk inkCache;
     
     public TimeSpanEraserFilter(Document document){
         this.doc = document;
@@ -71,6 +74,7 @@ public class TimeSpanEraserFilter extends AbstractTraceFilter{
         startTime = t.start;
         endTime = t.end;
         selectable = filterSelectableStrokes();
+        inkCache = doc.getInk();
         
     }
     
@@ -174,4 +178,12 @@ public class TimeSpanEraserFilter extends AbstractTraceFilter{
         }
         return toErase <= 0.5;
 	}
+
+	public List<InkTraceView> filter(InkInk ink){
+        if(inkCache != ink){
+            return super.filter(ink);
+        }else{
+            return getSelectableStrokes();
+        }
+    }
 }

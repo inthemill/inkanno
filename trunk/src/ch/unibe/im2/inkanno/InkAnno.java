@@ -118,6 +118,7 @@ public class InkAnno extends AbstractInkAnnoMain {
         c.addStringOption('o', OUTPUT, "", Strings.getString("InkAnno.cmd_opt_output_desc")); //$NON-NLS-1$ //$NON-NLS-2$
         c.addBooleanOption(CMD_OPT_APPEND, Strings.getString("InkAnno.cmd_opt_append_desc")); //$NON-NLS-1$
         c.addStringOption("colorizer","black","method how to choose color for the traces");
+        c.addStringOption("colorizer-args","","arguments for the colorizer to work properly");
         //add other exporter command line options
         for(Exporter e : exporters){
             e.addCommandLineOptions(c);

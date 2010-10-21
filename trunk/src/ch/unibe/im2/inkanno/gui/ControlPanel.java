@@ -194,7 +194,7 @@ public class ControlPanel extends JPanel implements Observer{
         timeSliderRight = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
         timeSliderRight.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
-                GUI.getInstance().getCurrentDocument().getTraceFilter().setCurrentTimeEnd(timeSliderRight.getValue());
+                GUI.getInstance().getCurrentDocumentView().getFilter().setCurrentTimeEnd(timeSliderRight.getValue());
                 GUI.getInstance().getCurrentDocument().getSelection().reFilterSelection();
                 GUI.getInstance().getCanvas().repaint();
             }
@@ -203,7 +203,7 @@ public class ControlPanel extends JPanel implements Observer{
         timeSliderLeft = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
         timeSliderLeft.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
-                GUI.getInstance().getCurrentDocument().getTraceFilter().setCurrentTimeStart(timeSliderLeft.getValue());
+                GUI.getInstance().getCurrentDocumentView().getFilter().setCurrentTimeStart(timeSliderLeft.getValue());
                 GUI.getInstance().getCurrentDocument().getSelection().reFilterSelection();
                 GUI.getInstance().getCanvas().repaint();
             }
@@ -233,9 +233,9 @@ public class ControlPanel extends JPanel implements Observer{
     private void sliderRecofiguration(){
     	Document doc = GUI.getInstance().getCurrentDocument();
     	Timespan t = doc.getInk().getTimeSpan(); 
-
-    	double cet = doc.getTraceFilter().getCurrentTimeEnd();
-        double cst = doc.getTraceFilter().getCurrentTimeStart();
+    	DocumentView dv = GUI.getInstance().getCurrentDocumentView();
+    	double cet = dv.getFilter().getCurrentTimeEnd();
+        double cst = dv.getFilter().getCurrentTimeStart();
         
         if(cet > t.end){
         	cet = t.end;

@@ -14,7 +14,7 @@ import javax.swing.tree.TreePath;
 import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 /**
  * @author emanuel
@@ -35,7 +35,7 @@ public class AnnotationTreePopUp extends JPopupMenu {
                     }else{
                         //TODO
                     }
-                } catch (ViewTreeManipulationException exception) {
+                } catch (TraceViewTreeManipulationException exception) {
                     exception.printStackTrace();
                     JOptionPane.showMessageDialog(
                             GUI.getInstance(),
@@ -58,7 +58,7 @@ public class AnnotationTreePopUp extends JPopupMenu {
                             ((InkTraceViewContainer)v).remove();
                         }
                     }
-                } catch (ViewTreeManipulationException exception) {
+                } catch (TraceViewTreeManipulationException exception) {
                     exception.printStackTrace();
                     JOptionPane.showMessageDialog(
                             GUI.getInstance(),
@@ -78,7 +78,7 @@ public class AnnotationTreePopUp extends JPopupMenu {
                     TreePath tp = TreeListener.getInstance().getPopUpSelection();
                     try {
                         ((InkTraceViewContainer)tp.getLastPathComponent()).removeCompletely();
-                    } catch (ViewTreeManipulationException exception) {
+                    } catch (TraceViewTreeManipulationException exception) {
                         exception.printStackTrace();
                         JOptionPane.showMessageDialog(
                                 GUI.getInstance(),

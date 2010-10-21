@@ -21,7 +21,7 @@ import ch.unibe.inkml.InkMLComplianceException;
 import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeImporter {
 
@@ -89,7 +89,7 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
 			
         } catch (InkMLComplianceException e) {
 			throw new InvalidDocumentException(e.getMessage());
-		} catch (ViewTreeManipulationException e) {
+		} catch (TraceViewTreeManipulationException e) {
             e.printStackTrace();
             throw new InvalidDocumentException("A View Tree ManipulationException has been raised, this should not happen.");
         } catch (IOException e) {

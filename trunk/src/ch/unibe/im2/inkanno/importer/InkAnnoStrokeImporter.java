@@ -49,7 +49,7 @@ import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     
     private String defaultColor = "blue";
@@ -121,7 +121,7 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     }
     
     
-    private void loadContainers() throws ViewTreeManipulationException {
+    private void loadContainers() throws TraceViewTreeManipulationException {
         Node translation = this.getDocument().getElementsByTagName("Transcription").item(0);
         InkTraceViewContainer root = new InkTraceViewContainer(ink,null);
         ink.addView(root);
@@ -129,7 +129,7 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
         //root.releaseEvents();
 	}
     
-    private void loadContainer(Element parent, InkTraceViewContainer container) throws ViewTreeManipulationException {
+    private void loadContainer(Element parent, InkTraceViewContainer container) throws TraceViewTreeManipulationException {
         Node child = parent.getFirstChild();
         while(child != null) {
             if(child.getNodeName().toLowerCase().equals("attribute")) {
@@ -195,7 +195,7 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     	this.loadStrokes();
     	try {
             this.loadContainers();
-        } catch (ViewTreeManipulationException e) {
+        } catch (TraceViewTreeManipulationException e) {
             e.printStackTrace();
             throw new InvalidDocumentException("While building the document a ViewTreeManipulation Exception has been raised, this should not happen.");
         }

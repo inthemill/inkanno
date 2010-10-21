@@ -13,7 +13,7 @@ import ch.unibe.inkml.InkMLComplianceException;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 /**
  * @author emanuel
@@ -47,11 +47,11 @@ public class VirtualInkTraceViewContainer extends InkTraceViewContainer {
         // a virtual InkTraceViewContainer will never be stored to InkML see class description
     }
     
-    public void addTrace(InkTraceView tv) throws ViewTreeManipulationException {
+    public void addTrace(InkTraceView tv) throws TraceViewTreeManipulationException {
         if(open){
             super.addTrace(tv);    
         }else{
-            throw new ViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
+            throw new TraceViewTreeManipulationException("The virtual view tree can not be manipulated, its here to access traces which are" +
                 " hidden in other view trees.");
         }
     }

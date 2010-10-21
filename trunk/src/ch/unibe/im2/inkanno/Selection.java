@@ -45,7 +45,7 @@ import ch.unibe.im2.inkanno.gui.tree.TreeElement;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 public class Selection extends AbstractObservable implements TreeSelectionModel{
     
@@ -280,9 +280,9 @@ public class Selection extends AbstractObservable implements TreeSelectionModel{
      * which is labeled with the transcription "text" and the type "type"
      * @param text transcription of the new InkTraceViewContainer
      * @param type type of the new InkTraceViewContainer
-     * @throws ViewTreeManipulationException 
+     * @throws TraceViewTreeManipulationException 
      */
-    public void labelSelection(String text, String type) throws ViewTreeManipulationException {
+    public void labelSelection(String text, String type) throws TraceViewTreeManipulationException {
         if(this.content.isEmpty()) {
             return;
         }
@@ -327,7 +327,7 @@ public class Selection extends AbstractObservable implements TreeSelectionModel{
         double last = lastEndTime;
         int dist = Integer.MAX_VALUE;
         InkTraceView selected = null;
-        for(InkTraceView view : this.doc.getTraceFilter().getSelectableStrokes()) {
+        for(InkTraceView view : doc.getTraceFilter().filter(doc.getInk())) {
            if(view.isLeaf() && !this.content.contains(view) && view.getTimeSpan().start >= last) {
                 if(view.getTimeSpan().start - last < dist) {
                     selected = view;

@@ -29,7 +29,7 @@ import javax.swing.tree.TreePath;
 
 import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.inkml.InkTraceViewContainer;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 /**
  * @author emanuel
@@ -173,7 +173,7 @@ public class AnnotationTree extends JTree implements DropTargetListener, MouseMo
             for(InkTraceViewContainer s : draggedElements){
                 target.addTrace(s);
             }
-        } catch (ViewTreeManipulationException e) {
+        } catch (TraceViewTreeManipulationException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(
                     GUI.getInstance(),
