@@ -48,7 +48,7 @@ import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.im2.inkanno.gui.TraceCanvas;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.util.TraceBound;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 public class CanvasController implements MouseListener, MouseMotionListener, KeyListener, Observer{
     
@@ -114,7 +114,7 @@ public class CanvasController implements MouseListener, MouseMotionListener, Key
         InkTraceView stroke = null;
         double dist = Double.MAX_VALUE;
         double near = this.gui.getCurrentDocument().getMostCommonTraceHeight();
-        for(InkTraceView s : this.gui.getCurrentDocument().getTraceFilter().getSelectableStrokes()) {
+        for(InkTraceView s : this.gui.getCurrentDocumentView().getFilter().getSelectableStrokes()) {
             if(s.isLeaf()) {
                 double d = s.distance(p);
                 if(d < dist) {
@@ -164,7 +164,7 @@ public class CanvasController implements MouseListener, MouseMotionListener, Key
                 this.getSelection().clear();
             }
             List<InkTraceView> l = new ArrayList<InkTraceView>();
-            for(InkTraceView s : this.gui.getCurrentDocument().getTraceFilter().getSelectableStrokes()) {
+            for(InkTraceView s : this.gui.getCurrentDocumentView().getFilter().getSelectableStrokes()) {
                 if(s.isLeaf() && testrect.contains(s.getCenterOfGravity())) {
                     l.add(s);
                 }
@@ -260,7 +260,7 @@ public class CanvasController implements MouseListener, MouseMotionListener, Key
         try{
 	        this.getSelection().labelSelection(this.gui.getControlPanel().getInput(), type);
 	        this.gui.getControlPanel().clearInputLabel();
-	    } catch (ViewTreeManipulationException e) {
+	    } catch (TraceViewTreeManipulationException e) {
             JOptionPane.showMessageDialog(
                     GUI.getInstance(),
                     String.format("Could add this group: \n %s", e.getMessage()), "Error", JOptionPane.ERROR_MESSAGE);

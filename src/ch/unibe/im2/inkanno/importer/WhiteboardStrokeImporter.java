@@ -52,7 +52,7 @@ import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceGroup;
 import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImporter{
     
@@ -207,7 +207,7 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
 			}
         } catch (InkMLComplianceException e) {
 			throw new InvalidDocumentException(e.getMessage());
-		} catch (ViewTreeManipulationException e) {
+		} catch (TraceViewTreeManipulationException e) {
             e.printStackTrace();
             throw new InvalidDocumentException("A View Tree ManipulationException has been raised, this should not happen.");
         }

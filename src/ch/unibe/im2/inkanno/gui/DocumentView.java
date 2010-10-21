@@ -23,6 +23,7 @@
 package ch.unibe.im2.inkanno.gui;
 
 import ch.unibe.im2.inkanno.Document;
+import ch.unibe.im2.inkanno.filter.TimeSpanEraserFilter;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTreeModel;
 
 public class DocumentView{
@@ -37,14 +38,32 @@ public class DocumentView{
 
     private double widthSliderValue;
     
+    private TimeSpanEraserFilter filter;
+    
     public DocumentView(Document doc, GUI gui) {
         this.gui = gui;
         this.doc = doc;
+        filter = new TimeSpanEraserFilter(doc);
+        doc.setTraceFilter(filter);
         menu = new DocumentMenu(this, this.gui.getMenu());
         treeModel = new AnnotationTreeModel(doc);
         widthSliderValue = (int) (doc.getMostCommonTraceHeight() / 5.0);
     }
     
+    /**
+     * @return the filter
+     */
+    public TimeSpanEraserFilter getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param filter the filter to set
+     */
+    public void setFilter(TimeSpanEraserFilter filter) {
+        this.filter = filter;
+    }
+
     public void activate() {
         this.menu.activate();
     }

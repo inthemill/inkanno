@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import ch.unibe.eindermu.euclidian.Vector;
+import ch.unibe.eindermu.utils.FileUtil;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;
 import ch.unibe.inkml.InkBind;
@@ -28,7 +29,7 @@ import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.InkChannel.ChannelName;
 import ch.unibe.inkml.util.TraceVisitor;
-import ch.unibe.inkml.util.ViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 public class DocumentRepair {
 	private Document doc;
@@ -51,11 +52,13 @@ public class DocumentRepair {
 		//res = repairTableIssue() || res;
 		//res = addTraceGroupIds() || res;
 		
-		try {
+		/*try {
             res = notifyNewTimeIssue() || res;
         } catch (Exception e) {
             throw new Error(e);
-        }
+        }*/
+		
+		res = setDocumentId();
 		
 		//res = repairLabel() || res;
 		//res = removeUnusedTranscription() || res;
@@ -63,7 +66,20 @@ public class DocumentRepair {
 	}
 	
 
-	public boolean correctingInkSource(){
+	/**
+     * @return
+     */
+    private boolean setDocumentId() {
+        String id = "http://iam.unibe.ch/fki/database/iamondodb/"+FileUtil.getInfo(doc.getFile()).name;
+        if(!id.equals(doc.getInk().getDocumentId())){
+            doc.getInk().setDocumentId(id);
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean correctingInkSource(){
 	    return false;
 	}
 	
@@ -204,7 +220,7 @@ public class DocumentRepair {
 	
 
 	//-------repair methods
-	private boolean repairTableIssue() throws ViewTreeManipulationException {
+	private boolean repairTableIssue() throws TraceViewTreeManipulationException {
 	    boolean res = false;
 		List<InkTraceViewContainer> tables = new ArrayList<InkTraceViewContainer>();
 		repairTableIssueHelper1(doc.getCurrentViewRoot(), tables);
