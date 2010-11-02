@@ -113,6 +113,7 @@
 			<target name="clean"/>
 			<fileset dir="plugins" includes="*/build.xml"/>
 		</subant>
+		<ant dir="${libinkml.dir}" target="clean" inheritAll="false"/>
     </target>
 
     <target name="dist" depends="jar">
