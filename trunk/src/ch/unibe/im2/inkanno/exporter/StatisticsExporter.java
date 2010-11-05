@@ -249,7 +249,7 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
     @Override
     public void setDocument(Document document) {
         DocumentManager i = new DocumentManager();
-        i.addDocument(document,false);
+        i.addDocument(document,false,false);
         setDocumentManager(i);
     }
 

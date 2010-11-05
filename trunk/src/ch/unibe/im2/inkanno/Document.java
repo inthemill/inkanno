@@ -39,6 +39,7 @@ import ch.unibe.im2.inkanno.exporter.FactoryException;
 import ch.unibe.im2.inkanno.filter.TimeSpanEraserFilter;
 import ch.unibe.im2.inkanno.util.Histogram;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.AnnotationStructure;
 import ch.unibe.inkml.InkCanvasTransform;
 import ch.unibe.inkml.InkChannel;
 import ch.unibe.inkml.InkContext;
@@ -307,7 +308,7 @@ public class Document extends AbstractObservable{
     }
     
     public InkAnnoAnnotationStructure getAnnotationStructure(){
-        return this.annotationStructure;
+        return annotationStructure;
     }
 
 

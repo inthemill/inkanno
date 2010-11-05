@@ -150,10 +150,10 @@ public class InkAnno extends AbstractInkAnnoMain {
                     try {
                         DocumentManager it = getDocumentManager(true);
                         exporter.setDocumentManager(it);
-                        if(it.size() == 0){
+                        /*if(it.size() == 0){
                             Messenger.error("No input file has been specified"); 
                             System.exit(1);
-                        }
+                        }*/
                         exporter.export();
                     } catch (ExporterException e) {
                         // TODO Auto-generated catch block

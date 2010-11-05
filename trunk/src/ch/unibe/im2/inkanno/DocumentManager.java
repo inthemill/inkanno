@@ -14,6 +14,7 @@ import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.NotImplementedException;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.AnnotationStructure;
 
 
 
@@ -49,7 +50,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     private List<String> files;
     private List<Boolean> keep;
     
-    private InkAnnoAnnotationStructure structure;
+    private AnnotationStructure structure;
     
     private int cursor = -1;
     
@@ -88,7 +89,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     private Document createCurrentDocument() throws InvalidDocumentException{
         if(documents.get(cursor) == null){
             try{
-                documents.set(cursor, new Document(new File(files.get(cursor)),structure));
+                documents.set(cursor, new Document(new File(files.get(cursor)),(InkAnnoAnnotationStructure) structure));
                 notifyObserver(ON_DOCUMENT_CONSTRUCTED, documents.get(cursor));
                 notifyObserver(ON_NEW_DOCUMENT, documents.get(cursor));
             } catch (IOException e) {
@@ -232,9 +233,9 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     }
     
     
-    public void addDocument(Document doc,boolean setCurrent){
+    public void addDocument(Document doc,boolean setCurrent,boolean keepInMemory){
         documents.add(doc);
-        keep.add(true);
+        keep.add(keepInMemory);
         if(doc.getFile() != null){
             files.add(doc.getFile().getPath());
         }else{
@@ -359,6 +360,14 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
                 throw new NotImplementedException();
             }
         };
+    }
+
+
+    /**
+     * @return
+     */
+    public AnnotationStructure getAnnotationStructure() {
+        return this.structure;
     }
 }
 
