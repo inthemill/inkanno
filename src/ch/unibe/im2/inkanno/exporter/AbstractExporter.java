@@ -31,7 +31,7 @@ public abstract class AbstractExporter implements Exporter {
     @Override
     public void setDocument(Document document) throws ExporterException {
         DocumentManager dm = new DocumentManager();
-        dm.addDocument(document,false);
+        dm.addDocument(document,false,false);
         setDocumentManager(dm);
     }
     

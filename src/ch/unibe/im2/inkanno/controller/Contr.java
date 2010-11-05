@@ -366,7 +366,7 @@ public class Contr implements ActionListener{
             if(rv == JFileChooser.APPROVE_OPTION) {
                 for(File file : GUI.fileChooser.getSelectedFiles()) {
                     try {
-                        g.getDocumentManager().addDocument(new Document(file,new InkAnnoAnnotationStructure(InkAnno.config())),true);
+                        g.getDocumentManager().addDocument(new Document(file,new InkAnnoAnnotationStructure(InkAnno.config())),true,true);
                     } catch(IOException e1) {
                         // TODO Auto-generated catch block
                         JOptionPane.showMessageDialog(g, "Could not read specified file. \n" + e1.getMessage(), "IO Error", JOptionPane.ERROR_MESSAGE);
