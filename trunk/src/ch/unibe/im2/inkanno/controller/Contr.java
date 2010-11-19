@@ -305,7 +305,7 @@ public class Contr implements ActionListener{
                                 Messenger.warn("Saving unchanged document!");
                             }
                             d.save(d.getFile().getAbsoluteFile());
-                            Messenger.inform("Document "+ d.getName() + " has been saved.");
+                            Messenger.inform(String.format("Document '%s' has been saved to %s.",d.getName(),d.getFile().getPath()));
                             return true;
                         } catch (ExporterException e) {
                             failed = e;

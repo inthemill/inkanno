@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.NotImplementedException;
@@ -23,6 +24,7 @@ import ch.unibe.inkml.AnnotationStructure;
  *
  */
 public class DocumentManager extends AbstractObservable implements Iterable<Document>{
+    
     public static final Aspect ON_DOCUMENT_CONSTRUCTED = new Aspect();
     public static final Aspect ON_NEW_DOCUMENT = new Aspect();
     /**
@@ -45,26 +47,59 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     public static final Aspect ON_DOCUMENT_UNLOADING = new Aspect();
     
     
-    
+    /**
+     * List of the documents available throu DocumentManager.
+     * DocumentManager loads documents lazy so some of the entries
+     * might be NULL but they will be loaded when requested
+     */
     private List<Document> documents;
+    
+    /**
+     * List of filenames to the documents which should be loaden.
+     */
     private List<String> files;
+    
+    /**
+     * Indicates for every document if it will be removed from memory when
+     * not current anymore.
+     */
     private List<Boolean> keep;
     
+    /**
+     * Annotation structure on which the documents are based on.
+     */
     private AnnotationStructure structure;
     
+    /**
+     * indicates the current document. -1 indicates that no document is current yet.
+     */
     private int cursor = -1;
     
+    /**
+     * Instanciates the documentManager with a list of documents.
+     * @param documentList
+     */
     public DocumentManager(List<Document> documentList){
+        boolean keepInMemory = true;
         documents = documentList;
         files = new ArrayList<String>();
         keep = new ArrayList<Boolean>();
         for(Document d: documents){
+            structure = d.getAnnotationStructure();
             files.add(d.getFile().getPath());
-            keep.add(true);
+            keep.add(keepInMemory);
         }
     }
     
-    
+    /**
+     * Instaciates the DocumentManager with a list of filenames to documents.
+     * A Annotation structure as to be specified the documents will be opened with.
+     * The last parameter is a boolean indicating if only the current document should be load in memory
+     * or all document should be kept in memory
+     * @param fileList List of filenames
+     * @param structure Annotation structure 
+     * @param loadOnlyCurrent load only current document of keep them in memory when loaded.
+     */
     public DocumentManager(List<String> fileList,InkAnnoAnnotationStructure structure, boolean loadOnlyCurrent){
         this.structure = structure;
         files = fileList;
@@ -78,7 +113,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     
     
     /**
-     * 
+     * Instanciate empty documentManager.
      */
     public DocumentManager() {
         documents = new ArrayList<Document>();
@@ -86,7 +121,8 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         keep = new ArrayList<Boolean>();
     }
 
-    private Document createCurrentDocument() throws InvalidDocumentException{
+    
+    private Document loadCurrentDocument() throws InvalidDocumentException{
         if(documents.get(cursor) == null){
             try{
                 documents.set(cursor, new Document(new File(files.get(cursor)),(InkAnnoAnnotationStructure) structure));
@@ -132,10 +168,25 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         return setCurrentDocument(cursor -1);
     }
     
+    /**
+     * Sets specified document as current document in the documentManager. 
+     * @param doc
+     * @return
+     */
     public Document setCurrentDocument(Document doc){
         int current = documents.indexOf(doc);
         if(current == -1){
-            throw new IllegalArgumentException("Can not set unknown document do current document in documentManager");
+            for(String file : files){
+                if(doc.getFile().getPath().endsWith(file)){
+                    current = files.indexOf(file);
+                    if(documents.get(current)== null){
+                        documents.set(current, doc);
+                    }
+                    return getCurrentDocument();
+                }
+            }
+            addDocument(doc, true, false);
+            return getCurrentDocument();
         }
         
         if(current == cursor){
@@ -155,6 +206,14 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
      */
     public Document getCurrentDocument() {
         return documents.get(cursor);
+    }
+
+    /**
+     * Returns the filename of the document which is currently active.
+     * @return
+     */
+    public String getCurrentFilename() {
+        return files.get(cursor);
     }
 
     
@@ -190,7 +249,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         //set cursor
         cursor = index;
         try{
-            Document d = createCurrentDocument();
+            Document d = loadCurrentDocument();
             handleDocumentLostFocus(former);
             notifyObserver(ON_DOCUMENT_SWITCH, d);
             notifyObserver(ON_DOCUMENT_PRESENT,d);
@@ -239,6 +298,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         if(doc.getFile() != null){
             files.add(doc.getFile().getPath());
         }else{
+            Messenger.warn("Document without filename attached is added to DocumentManager, some application my depend on the filename");
             files.add("");
         }
         notifyObserver(ON_NEW_DOCUMENT, doc);
@@ -370,4 +430,6 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         return this.structure;
     }
 }
+
+
 
