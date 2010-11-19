@@ -32,6 +32,7 @@ import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.NumberList;
 import ch.unibe.eindermu.utils.Observer;
+import ch.unibe.im2.inkanno.DocumentRecognizer.FileType;
 import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
 import ch.unibe.im2.inkanno.exporter.ExporterFactory;
@@ -109,7 +110,7 @@ public class Document extends AbstractObservable{
         	this.file = file;
         	setSaved(true);
         }else{
-        	this.file = null;
+        	this.file = file;
         	setSaved(false);
         }
         
@@ -197,6 +198,7 @@ public class Document extends AbstractObservable{
         exporter.export();
         file = selectedFile;
         name = file.getName();
+        type = FileType.INKML;
         setSaved(true);
     }
 
