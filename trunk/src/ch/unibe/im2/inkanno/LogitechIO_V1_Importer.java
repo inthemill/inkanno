@@ -75,7 +75,7 @@ public class LogitechIO_V1_Importer extends XmlHandler implements StrokeImporter
     	inkSource.setModel("io Digital Pen");
     	inkSource.setManufacturer("Logitech");
     	inkSource.setDescription("");     
-        definition.enter(inkSource);
+        definition.enterElement(inkSource);
         
         
         try{
@@ -107,12 +107,12 @@ public class LogitechIO_V1_Importer extends XmlHandler implements StrokeImporter
 	        sourceFormat.addChannel(f);
 	        sourceFormat.setFinal();
 	        
-	        definition.enter(sourceFormat);
+	        definition.enterElement(sourceFormat);
 	        
 	        InkCanvas canvas = new InkAnnoCanvas(ink); 
-	        definition.enter(canvas);
+	        definition.enterElement(canvas);
 	        transform = InkCanvasTransform.getIdentityTransform(ink,"identityTransform",sourceFormat,canvas.getTraceFormat());
-	        definition.enter(transform);
+	        definition.enterElement(transform);
 	        
 	        context = new InkContext(ink,"maincontext");
 	        context.setInkSourceByRef(inkSource);

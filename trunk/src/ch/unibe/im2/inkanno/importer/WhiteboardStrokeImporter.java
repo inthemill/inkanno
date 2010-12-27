@@ -150,7 +150,7 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
         source.setModel("eBeam");
         source.setManufacturer("Luidia");
         source.setDescription("http://www.e-beam.com");
-        definition.enter(source);
+        definition.enterElement(source);
         
         format = new InkTraceFormat(ink,"whiteboardFormat");
         InkChannel x = new InkChannelDouble(ink);
@@ -173,15 +173,15 @@ public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImport
         
         format.setFinal();
         
-        definition.enter(format);
+        definition.enterElement(format);
         InkCanvas canvas = new InkAnnoCanvas(ink); 
-        definition.enter(canvas);
+        definition.enterElement(canvas);
         transform = new InkCanvasTransform(ink);
         InkAffineMapping mapping = InkAffineMapping.createIdentityInkAffinMapping(ink,format,canvas.getTraceFormat());
         transform.setForewardMapping(mapping);
         
         //transform = InkCanvasTransform.getIdentityTransform(ink,"whiteboardToInkAnnoTransform",format,canvas.getTraceFormat());
-        definition.enter(transform);
+        definition.enterElement(transform);
         
         context = new InkContext(ink,"maincontext");
         context.setInkSourceByRef(source);

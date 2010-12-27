@@ -3,6 +3,8 @@ package ch.unibe.im2.inkanno.importer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +24,19 @@ import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 public class InkMLImporter extends XmlHandler implements StrokeImporter {
 	
 	public InkMLImporter(File file) throws IOException {
-		super.loadFromFile(file);
+		loadSchema();
+		loadFromFile(file);
 	}
 	
 	public InkMLImporter(InputStream stream) throws IOException {
-        super.loadFromStream(stream);
+        loadSchema();
+        loadFromStream(stream);
     }
+	
+	private void loadSchema() {
+        //addSchema(InkInk.class.getResourceAsStream("xml.xsd"));
+		//addSchema(InkInk.class.getResourceAsStream("inkml.xsd"));
+	}
 
 	@Override
 	public void importTo(Document document) throws InvalidDocumentException {

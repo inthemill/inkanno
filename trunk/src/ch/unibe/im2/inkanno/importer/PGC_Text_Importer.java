@@ -44,7 +44,7 @@ public class PGC_Text_Importer implements StrokeImporter {
         	InkInkSource source = new InkInkSource(ink,"io2Source");
         	source.setModel("IO2");
         	source.setManufacturer("Logitech");
-            definition.enter(source);
+            definition.enterElement(source);
         
 	        InkTraceFormat format = new InkTraceFormat(ink,"Logitechformat");
 	        InkChannel x = new InkChannelDouble(ink);
@@ -68,11 +68,11 @@ public class PGC_Text_Importer implements StrokeImporter {
 	        format.addChannel(f);
 	        format.setFinal();
 	        
-	        definition.enter(format);
+	        definition.enterElement(format);
 	        InkCanvas canvas = new InkAnnoCanvas(ink); 
-	        definition.enter(canvas);
+	        definition.enterElement(canvas);
 	        InkCanvasTransform transform = InkCanvasTransform.getIdentityTransform(ink,"pgcToInkAnnoTransform",format,canvas.getTraceFormat());
-	        definition.enter(transform);
+	        definition.enterElement(transform);
 	        
 	        InkContext context = new InkContext(ink,"maincontext");
 	        context.setInkSourceByRef(source);
