@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ink>
+<ink xmlns="http://www.w3.org/2003/InkML" documentID="http://im2.unibe.ch/inkanno/InkAnnoInkMLCanvas.inkml" >
     <annotation type="version">1.0.1</annotation>
     <annotation type="name">InkAnnoInkMLCanvas</annotation>
     <annotation type="description">
         This InkML file defines the canvas provided by inkanno.
         InkML sources that should be read by inkanno must be at least conform this canvas and its traceformat.
     </annotation>
-    <definition>
+    <definitions>
         <canvas xml:id="inkAnnoCanvas">
             <traceFormat xml:id="inkAnnoCanvasFormat">
                 <channel type="decimal" default="0" name="X" orientation="+ve"/>
@@ -17,5 +17,5 @@
                 </intermittentChannels>
             </traceFormat>
         </canvas>        
-    </definition>
+    </definitions>
 </ink>

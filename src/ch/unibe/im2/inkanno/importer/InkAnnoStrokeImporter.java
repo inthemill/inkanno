@@ -160,7 +160,7 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
     	inkSource.setModel("InkAnno");
     	inkSource.setManufacturer("iam.unibe.ch/fki/inkanno");
     	//inkSource.setDescription("");
-        definition.enter(inkSource);
+        definition.enterElement(inkSource);
         
         sourceFormat = new InkTraceFormat(ink,"inkannoTraceFormat");
         InkChannel x = new InkChannelDouble(ink);
@@ -179,11 +179,11 @@ public class InkAnnoStrokeImporter extends XmlHandler implements StrokeImporter{
         f.setName(InkChannel.Name.F);
         sourceFormat.addIntermittentChannel(f);
         */
-        definition.enter(sourceFormat);
+        definition.enterElement(sourceFormat);
         InkCanvas canvas = new InkAnnoCanvas(ink); 
-        definition.enter(canvas);
+        definition.enterElement(canvas);
         transform = InkCanvasTransform.getIdentityTransform(ink,"InkAnnoV1_2_InkAnnoV2Transform",sourceFormat,canvas.getTraceFormat());
-        definition.enter(transform);
+        definition.enterElement(transform);
         
         context = new InkContext(ink,"maincontext");
         context.setInkSourceByRef(inkSource);

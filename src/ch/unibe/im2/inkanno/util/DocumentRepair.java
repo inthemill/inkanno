@@ -58,7 +58,7 @@ public class DocumentRepair {
             throw new Error(e);
         }*/
 		
-		res = setDocumentId();
+		//res = setDocumentId();
 		
 		//res = repairLabel() || res;
 		//res = removeUnusedTranscription() || res;
@@ -190,7 +190,7 @@ public class DocumentRepair {
     	     if(source != null){
     	         source.setTraceFormat(logitechFormat);
     	     }else{
-    	         doc.getInk().getDefinitions().enter(logitechFormat);
+    	         doc.getInk().getDefinitions().enterElement(logitechFormat);
     	     }
     	     if(doc.getInk().containsAnnotation("PenId")){
     	         source.setSerialNo(doc.getInk().getAnnotation("PenId"));
