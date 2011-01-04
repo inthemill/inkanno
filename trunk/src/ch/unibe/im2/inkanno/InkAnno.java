@@ -219,7 +219,7 @@ public class InkAnno extends AbstractInkAnnoMain {
                 System.exit(1);
             }
             if(!res){
-                Messenger.error(Strings.getString("InkAnno.action_repair_msg_no_job")); //$NON-NLS-1$
+                Messenger.inform(Strings.getString("InkAnno.action_repair_msg_no_job")); //$NON-NLS-1$
             }
             File output = null;
             if(getConfig().get(OUTPUT) != null && !getConfig().get(OUTPUT).isEmpty()){ //$NON-NLS-1$

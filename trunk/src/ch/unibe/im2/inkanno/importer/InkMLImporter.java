@@ -34,8 +34,8 @@ public class InkMLImporter extends XmlHandler implements StrokeImporter {
     }
 	
 	private void loadSchema() {
-        //addSchema(InkInk.class.getResourceAsStream("xml.xsd"));
-		//addSchema(InkInk.class.getResourceAsStream("inkml.xsd"));
+        addSchema(InkInk.class.getResourceAsStream("xml.xsd"));
+		addSchema(InkInk.class.getResourceAsStream("inkml.xsd"));
 	}
 
 	@Override
