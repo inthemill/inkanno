@@ -33,7 +33,7 @@ public class InkStatistics {
     
     public void calculate(){
         Histogram h = new Histogram((int) ink.getBounds().height);
-        for(InkTraceView stroke : ink.getFlatTraceViewLeafs()){
+        for(InkTraceView stroke : ink.getFlatTraceViewLeafs(null)){
             if(passFilters((InkTraceViewLeaf) stroke)){
                 h.inc((int) stroke.getBounds().height);
             }

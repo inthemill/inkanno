@@ -50,6 +50,7 @@ import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
+import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.util.TraceViewFilter;
 
 /**
@@ -288,11 +289,7 @@ public class Document extends AbstractObservable{
 
 
 	public List<InkTraceView> getFlattenedViews() {
-		List<InkTraceView> result = new ArrayList<InkTraceView>();
-		for(InkTraceView v: this.getInk().getViewRoot().getFlattenedViews()){
-				result.add(v);
-		}
-		return result;
+		return getInk().getViewRoot().getFlattenedViews(getTraceFilter());
 	}
 	
 	public DocumentRecognizer.FileType getType() {
@@ -351,4 +348,9 @@ public class Document extends AbstractObservable{
             throw e;
         }
     }
+
+
+	public List<InkTraceViewLeaf> getFlatTraceViewLeafs() {
+		return getInk().getFlatTraceViewLeafs(this.getTraceFilter());
+	}
 }
