@@ -101,7 +101,7 @@ public class CanvasController implements MouseListener, MouseMotionListener, Key
             this.getSelection().toggle(trace);
         } else {
             if(e.isShiftDown()) {
-                this.getSelection().selectBetween(trace, this.gui.getCurrentDocument().getInk().getFlatTraceViewLeafs());
+                this.getSelection().selectBetween(trace, this.gui.getCurrentDocument().getFlatTraceViewLeafs());
             } else {
                 this.getSelection().replace(trace);
             }

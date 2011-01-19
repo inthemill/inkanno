@@ -109,7 +109,7 @@ public class TimeSpanEraserFilter extends AbstractTraceFilter{
         AffineTransform af = AffineTransform.getScaleInstance(factor, factor);
         af.concatenate(AffineTransform.getTranslateInstance(-b.x, -b.y));
         byte[] arr = new byte[] { (byte) 0, (byte) 255 };
-        for(InkTraceView s : doc.getInk().getViewRoot().getFlattenedTraceLeafs()) {
+        for(InkTraceView s : doc.getInk().getViewRoot().getFlattenedTraceLeafs(null)) {
             if(s.getBrush()!= null && s.getBrush().isEraser()) {
                 BufferedImage bf = new BufferedImage(500, 500, BufferedImage.TYPE_BYTE_BINARY, new IndexColorModel(1, 2, arr,arr,arr));
                 Graphics2D g = (Graphics2D) bf.getGraphics();
@@ -124,7 +124,7 @@ public class TimeSpanEraserFilter extends AbstractTraceFilter{
     }
     
     public List<InkTraceView> filterSelectableStrokes() {
-    	return  filter(doc.getFlattenedViews()); 
+    	return  doc.getInk().getViewRoot().getFlattenedViews(this); 
     }    
 
 	/**
