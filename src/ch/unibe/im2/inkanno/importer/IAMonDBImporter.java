@@ -37,6 +37,14 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
 	@Override
 	public void importTo(Document document) throws InvalidDocumentException {
     	ink = new InkInk();
+    	//set documentID
+    	Pattern fileIdPattern = Pattern.compile("original/(\\w+)/\\1-(w+)/strokes(\\w)\\.xml$");
+    	Matcher m = fileIdPattern.matcher(file.getAbsolutePath());
+    	if(!m.matches()){
+    		throw new InvalidDocumentException(String.format("Its not possible to extract id from document's file name %s ",file.getAbsolutePath()));
+    	}
+    	ink.setDocumentId(String.format("http://iam.unibe.ch/fki/database/iamondb/%s-%s%s",m.group(1),m.group(2),m.group(3)));
+    	
     	document.setInk(ink);
     	Pattern idPattern  = Pattern.compile("^([^-]+)-(\\d+)([a-z]?)-([^-]+)$");
     	File dbdir = file.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile();
@@ -61,7 +69,7 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
     			textLine.annotate("transcription",e.getAttribute("text").replace("&quot;","\"").replace("&apos;","'"));
     			
                 String id = e.getAttribute("id");
-                Matcher m = idPattern.matcher(id);
+                m = idPattern.matcher(id);
                 if(m.matches()){
                 	File linefile = new File(dbdir.getPath()+File.separator+"lineStrokes"
                 		+File.separator+m.group(1)
