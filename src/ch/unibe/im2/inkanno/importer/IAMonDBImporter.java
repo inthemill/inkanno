@@ -38,10 +38,11 @@ public class IAMonDBImporter extends WhiteboardStrokeImporter implements StrokeI
 	public void importTo(Document document) throws InvalidDocumentException {
     	ink = new InkInk();
     	//set documentID
-    	Pattern fileIdPattern = Pattern.compile("original/(\\w+)/\\1-(w+)/strokes(\\w)\\.xml$");
+    	
+    	Pattern fileIdPattern = Pattern.compile(".*original\\/(\\w+)\\/\\1-(\\w+)\\/strokes(\\w)\\.xml$");
     	Matcher m = fileIdPattern.matcher(file.getAbsolutePath());
     	if(!m.matches()){
-    		throw new InvalidDocumentException(String.format("Its not possible to extract id from document's file name %s ",file.getAbsolutePath()));
+    		throw new InvalidDocumentException(String.format("It's not possible to extract id from document's file name '%s' ",file.getAbsolutePath()));
     	}
     	ink.setDocumentId(String.format("http://iam.unibe.ch/fki/database/iamondb/%s-%s%s",m.group(1),m.group(2),m.group(3)));
     	
