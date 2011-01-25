@@ -99,7 +99,7 @@ public abstract class AbstractExporter implements Exporter {
      * @return said ID as string
      */
     public String getID(Document doc){
-        return FileUtil.getInfo(doc.getFile()).name;
+    	return doc.getInk().getId();
     }
     
     /**
