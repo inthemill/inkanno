@@ -21,6 +21,10 @@ public class InkStatistics {
     private InkInk ink;
     private List<TraceViewFilter> filters;
     private int mostCommonTraceHeight;
+	private double h_mean;
+	private double w_mean;
+	private double w_var;
+	private double h_var;
     
     public InkStatistics(InkInk ink){
         this.ink = ink;
@@ -33,13 +37,21 @@ public class InkStatistics {
     
     public void calculate(){
         Histogram h = new Histogram((int) ink.getBounds().height);
+        Histogram w = new Histogram((int) ink.getBounds().width);
+        
         for(InkTraceView stroke : ink.getFlatTraceViewLeafs(null)){
             if(passFilters((InkTraceViewLeaf) stroke)){
                 h.inc((int) stroke.getBounds().height);
+                w.inc((int) stroke.getBounds().width);
             }
         }
         h.smooth(2);
-        this.mostCommonTraceHeight = h.getMaxIndex();
+        mostCommonTraceHeight = h.getMaxIndex();
+        
+        h_mean = h.getMean();
+        h_var  = h.getVariance();
+        w_mean = w.getMean();
+        w_var  = w.getVariance();
     }
 
     /**
@@ -58,4 +70,20 @@ public class InkStatistics {
     public int getMostCommonTraceHeight(){
         return mostCommonTraceHeight;
     }
+
+	public double getH_mean() {
+		return h_mean;
+	}
+
+	public double getW_mean() {
+		return w_mean;
+	}
+
+	public double getW_var() {
+		return w_var;
+	}
+
+	public double getH_var() {
+		return h_var;
+	}
 }
