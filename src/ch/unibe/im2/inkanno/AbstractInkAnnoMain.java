@@ -113,6 +113,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
                     while(sc.hasNextLine()){
                         documentFileList.add(sc.nextLine());
                     }
+                    sc.close();
                 } catch (FileNotFoundException e) {
                     Messenger.error(String.format("File %s containing list of input file does not exits",getConfig().get(INPUT)));
                     e.printStackTrace();
