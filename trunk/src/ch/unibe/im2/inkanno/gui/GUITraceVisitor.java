@@ -98,7 +98,7 @@ public class GUITraceVisitor extends TraceGraphVisitor{
     
 	@Override
 	public void visit(InkTraceViewContainer container) {
-		if(passTraceFilter(container)){
+		if(pass(container)){
 		    GraphicsBackup gb = new GraphicsBackup(getGraphics());
 			paintContainer(container);
 			gb.reset();

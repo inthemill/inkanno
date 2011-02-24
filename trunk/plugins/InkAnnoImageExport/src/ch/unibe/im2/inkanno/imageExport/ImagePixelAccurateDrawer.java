@@ -56,8 +56,8 @@ public abstract class ImagePixelAccurateDrawer extends RegisteredImageExportDraw
 			gb.reset();
 	}
 
-	public boolean passTraceFilter(InkTraceView view) {
-		if(super.passTraceFilter(view)){
+	public boolean pass(InkTraceView view) {
+		if(super.pass(view)){
 			if(!view.containsAnnotation(InkAnnoAnnotationStructure.TYPE) || !view.getAnnotation(InkAnnoAnnotationStructure.TYPE).equals("Marking")){
 				return true;
 			}
