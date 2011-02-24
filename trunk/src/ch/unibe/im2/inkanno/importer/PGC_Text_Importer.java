@@ -40,6 +40,7 @@ public class PGC_Text_Importer implements StrokeImporter {
     	
     	InkDefinitions definition = new InkDefinitions(ink);
     	ink.setDefinitions(definition);
+    	Scanner scan = null;
     	try{
         	InkInkSource source = new InkInkSource(ink,"io2Source");
         	source.setModel("IO2");
@@ -84,7 +85,7 @@ public class PGC_Text_Importer implements StrokeImporter {
    
 			Pattern doublePattern = Pattern.compile("-?[0-9]+([.,][0-9]+)?");
 			long length = file.length();
-			Scanner scan = new Scanner(this.file);
+			scan = new Scanner(this.file);
 			if(scan.findInLine("Pen id: (.*)")!=null){
 				ink.annotate("PenId", scan.match().group(1));
 			}
@@ -141,13 +142,18 @@ public class PGC_Text_Importer implements StrokeImporter {
 			}
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new InvalidDocumentException(e.getMessage());
 		}catch( InkMLComplianceException e){
+			e.printStackTrace();
         	throw new InvalidDocumentException(e.getMessage());
         } catch (TraceViewTreeManipulationException e) {
             e.printStackTrace();
             throw new InvalidDocumentException("A View Tree ManipulationException has been raised, this should not happen.");
+        }finally{
+        	if(scan != null){
+        		scan.close();
+        	}
         }
 		
 	}

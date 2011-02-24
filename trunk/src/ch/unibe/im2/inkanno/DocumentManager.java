@@ -86,7 +86,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         keep = new ArrayList<Boolean>();
         for(Document d: documents){
             structure = d.getAnnotationStructure();
-            files.add(d.getFile().getPath());
+            files.add(d.getFile().getAbsolutePath());
             keep.add(keepInMemory);
         }
     }
@@ -222,10 +222,14 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
      * @throws InvalidDocumentException 
      */
     public Document setCurrentDocument(String path) throws InvalidDocumentException {
-        if(files.contains(path)){
-            return setCurrentDocument(files.indexOf(path));
+    	return setCurrentDocument(new File(path));
+    }
+    
+	public Document setCurrentDocument(File file) throws InvalidDocumentException {
+        if(files.contains(file.getAbsolutePath())){
+            return setCurrentDocument(files.indexOf(file.getAbsolutePath()));
         }else{
-            throw new InvalidDocumentException(String.format("Document with path '%s' is not managed any more.",path));
+            throw new InvalidDocumentException(String.format("Document with path '%s' is not managed any more.",file.getAbsolutePath()));
         }
     }
     
@@ -241,7 +245,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         }
         //check if there has to be done something
         if( index == cursor){
-            return null;
+            return documents.get(index);
         }
         int former = cursor;
         //notify befor change
@@ -262,11 +266,15 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     }
 
     
+    public Document getDocument(File file) throws InvalidDocumentException{
+    	return setCurrentDocument(file);
+    }
+    
     private void handleDocumentLostFocus(int index){
         if(index > -1 && index < size()){
             if(!keep.get(index)){
                 if(documents.get(index).getFile() != null){
-                    files.set(index, documents.get(index).getFile().getPath());
+                    files.set(index, documents.get(index).getFile().getAbsolutePath());
                 }
                 notifyObserver(ON_DOCUMENT_UNLOADING,documents.get(index));
                 documents.set(index, null);
@@ -296,10 +304,10 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         documents.add(doc);
         keep.add(keepInMemory);
         if(doc.getFile() != null){
-            files.add(doc.getFile().getPath());
+            files.add(doc.getFile().getAbsolutePath());
         }else{
             Messenger.warn("Document without filename attached is added to DocumentManager, some application my depend on the filename");
-            files.add("");
+            files.add(doc.getInk().getId());
         }
         notifyObserver(ON_NEW_DOCUMENT, doc);
         if(setCurrent){
@@ -360,6 +368,17 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         return cursor > -1 && cursor < size();
     }
 
+    public boolean hasDocument(String filename){
+    	return hasDocument(new File(filename));
+    }
+    public boolean hasDocument(File file){
+    	return files.contains(file.getAbsolutePath());
+    }
+    
+    public boolean hasDocument(Document doc){
+    	return this.documents.contains(doc);
+    }
+    
     /**
      * @return
      */

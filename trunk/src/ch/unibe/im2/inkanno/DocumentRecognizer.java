@@ -23,7 +23,9 @@
 package ch.unibe.im2.inkanno;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -93,10 +95,10 @@ public class DocumentRecognizer extends DefaultHandler{
     	
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
-        
+        InputStream stream = new FileInputStream(file);
         try {
             this.parser = factory.newSAXParser();
-            this.parser.parse(file, this);
+            this.parser.parse(stream, this);
             
         } catch(ParserConfigurationException e) {
             throw new IOException(e.getMessage());
@@ -104,6 +106,9 @@ public class DocumentRecognizer extends DefaultHandler{
             if(!e.getMessage().equals("success")) {
                 throw new IOException(e.getMessage());
             }
+        }finally{
+        	this.parser = null;
+        	stream.close();
         }
     }
     
@@ -113,6 +118,7 @@ public class DocumentRecognizer extends DefaultHandler{
 			this.result = FileType.PGC_CUSTOM;
 			return true;
 		}
+		scan.close();
 		return false;
 	}
 
