@@ -114,7 +114,7 @@ public class InkAnno extends AbstractInkAnnoMain {
         
        
         c.addStringOption('i', INPUT, "",Strings.getString("InkAnno.cmd_opt_input_desc")); //$NON-NLS-1$ //$NON-NLS-2$
-        c.addStringOption(CMD_OPT_INPUT_FILE, "","if specified, the input file is interpreted as a list of input files"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.addBooleanOption(CMD_OPT_INPUT_FILE, "if specified, the input file is interpreted as a list of input files");
         c.addStringOption('o', OUTPUT, "", Strings.getString("InkAnno.cmd_opt_output_desc")); //$NON-NLS-1$ //$NON-NLS-2$
         c.addBooleanOption(CMD_OPT_APPEND, Strings.getString("InkAnno.cmd_opt_append_desc")); //$NON-NLS-1$
         c.addStringOption("colorizer","black","method how to choose color for the traces");
