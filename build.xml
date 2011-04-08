@@ -62,9 +62,16 @@
     </target>
 	
 
-    <target name="all" depends="plugins,jar">
+    <target name="all" depends="plugins,jar,install">
 	</target>
 
+    <target name="install" depends="plugins,jar">
+        <copy file="${basedir}/inkanno.tpl" tofile="${prefix}/bin/inkanno" />
+        <replace file="${prefix}/bin/inkanno" token="$basedir$" value="${basedir}"/>
+    	<chmod file="${prefix}/bin/inkanno" perm="755"/>
+    </target>
+
+	
 	<target name="plugins" depends="compile,libInkML">
 	    <delete file="MANIFEST.MF"/>
 		<dirname file="${ant.file}" property="inkanno.dir"/>
