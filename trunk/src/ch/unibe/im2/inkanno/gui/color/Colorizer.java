@@ -5,6 +5,8 @@ package ch.unibe.im2.inkanno.gui.color;
 
 import java.awt.Graphics2D;
 
+import javax.swing.Icon;
+
 import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.util.TraceViewFilter;
 
@@ -39,4 +41,10 @@ public interface Colorizer {
      * @param filter
      */
     void setFilter(TraceViewFilter filter);
+
+    /**
+     * Reutns the caption this colorizer is identified by. For dispay in menu
+     * @return Caption
+     */
+	public String getCaption();
 }

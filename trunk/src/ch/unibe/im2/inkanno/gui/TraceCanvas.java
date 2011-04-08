@@ -53,7 +53,7 @@ public class TraceCanvas extends Component implements Observable, Observer{
     
     public static final Aspect ON_PAINT = new Aspect(){};
 
-	private TraceGraphVisitor strokeVisitor;
+	private TraceGraphVisitor traceVisitor;
     
     private AffineTransform af;
     
@@ -90,10 +90,10 @@ public class TraceCanvas extends Component implements Observable, Observer{
     }
     
     public TraceGraphVisitor getTraceVisitor() {
-		return strokeVisitor;
+		return traceVisitor;
 	}
-	public void setTraceVisitor(TraceGraphVisitor strokeVisitor) {
-		this.strokeVisitor = strokeVisitor;
+	public void setTraceVisitor(TraceGraphVisitor traceVisitor) {
+		this.traceVisitor = traceVisitor;
 	}
     
     public void notifyFor(Aspect event, Object subject) {
@@ -124,8 +124,8 @@ public class TraceCanvas extends Component implements Observable, Observer{
         return GUI.getInstance().getCurrentDocument();
     }
     
-    public double zoom(boolean in) {
-        double f = (in)?4/3.0:3/4.0;
+    public double zoom(boolean in_rather_than_out) {
+        double f = (in_rather_than_out)?4/3.0:3/4.0;
         this.w = (int) (this.w * f);
         this.h = (int) (this.h * f);
         calculate();
@@ -169,10 +169,10 @@ public class TraceCanvas extends Component implements Observable, Observer{
             
             g.transform(getAffineTransform());
             
-            strokeVisitor.setStrokeWidth(getStrokeWeight());
-            strokeVisitor.setGraphics(g);
+            traceVisitor.setStrokeWidth(getStrokeWeight());
+            traceVisitor.setGraphics(g);
             //strokeVisitor.visitAll(getDocument().getVirtualViews());
-            strokeVisitor.go(getDocument().getCurrentViewRoot());
+            traceVisitor.go(getDocument().getCurrentViewRoot());
             
             
         }

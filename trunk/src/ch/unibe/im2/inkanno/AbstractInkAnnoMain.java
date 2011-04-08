@@ -44,61 +44,7 @@ public abstract class AbstractInkAnnoMain extends AbstractMain {
         }
         return document;
     }
-    /*
-    protected int eachDocument(Block<Document,Boolean> block){
-        if(getConfig().get(INPUT)== null || getConfig().get(INPUT).isEmpty()){
-            return 0;
-        }
-        StringList documentFileList = new StringList();
-        if(getConfig().getB(InkAnno.CMD_OPT_INPUT_FILE)){
-            File file = new File(getConfig().get(INPUT));
-            try {
-                Scanner sc = new Scanner(file);
-                while(sc.hasNextLine()){
-                    documentFileList.add(sc.nextLine());
-                }
-            } catch (FileNotFoundException e) {
-                showError(String.format("File %s containing list of input file does not exits",getConfig().get(INPUT)));
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }else{
-            documentFileList = getConfig().getMultiple(INPUT);
-        }
-        String errormessage = "";
-        boolean cont = true;
-        int counter = 0;
-        for(String fileName : documentFileList){
-            File file = new File(fileName);
-            boolean ok = true;
-            if(file.exists()){
-                try {
-                    cont = block.yield(new Document(file,new InkAnnoAnnotationStructure(getConfig())));
-                    counter ++;
-                } catch (IOException e) {
-                    ok = false;
-                    e.printStackTrace();
-                    errormessage = errormessage + ": " + e.getMessage();
-                } catch (InvalidDocumentException e) {
-                    ok = false;
-                    e.printStackTrace();
-                    errormessage = errormessage + ": " + e.getMessage();
-                }
-            }else{
-                ok = false;
-            }
-            if(!ok){
-                showError(errormessage);
-                System.exit(1);
-            }
-            if(!cont){
-                return counter;
-            }
-        }
-        return counter;
-        
-    }
-    */
+ 
     /**
      * @return a document Manager filled with the documents given by the command line
      * @throws IOException 

@@ -40,6 +40,7 @@ import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
+import ch.unibe.im2.inkanno.DrawPropertyManager;
 import ch.unibe.im2.inkanno.InkAnno;
 import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;
 import ch.unibe.im2.inkanno.DocumentRecognizer.FileType;
@@ -49,6 +50,7 @@ import ch.unibe.im2.inkanno.exporter.ExporterFactory;
 import ch.unibe.im2.inkanno.exporter.FactoryException;
 import ch.unibe.im2.inkanno.gui.AnnotationView;
 import ch.unibe.im2.inkanno.gui.GUI;
+import ch.unibe.im2.inkanno.gui.color.Colorizer;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 import ch.unibe.inkml.InkCanvasTransform;
 import ch.unibe.inkml.InkContext;
@@ -428,4 +430,22 @@ public class Contr implements ActionListener{
         }
         
     }
-}
+    
+    public static class ChangeColorizer implements ActionListener{
+
+        private Colorizer colorizer;
+
+		public ChangeColorizer(Colorizer c) {
+			super();
+			this.colorizer = c;
+		}
+
+		@Override
+        public void actionPerformed(ActionEvent event) {
+        	DrawPropertyManager.getInstance().setColorizer(colorizer);
+        }
+        
+    }
+    
+    
+    }

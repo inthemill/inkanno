@@ -133,18 +133,19 @@ public class Document extends AbstractObservable{
      * 
      */
     private void testInkAnnoCompatibility() throws InvalidDocumentException{
-        if(ink == null){
-            
-        }
-        try {
-            if(ink.getViewRoot().getCanvas() != null){
-                InkAnno.getInstance().getCanvas().acceptAsCompatible(ink.getViewRoot().getCanvas(),true);
-            }else if(InkAnno.getInstance().getCanvas().getTraceFormat() != null){
-                InkAnno.getInstance().getCanvas().getTraceFormat().acceptAsCompatible(ink.getViewRoot().getContext().getSourceFormat(),true);
-            }
-        } catch (InkMLComplianceException e) {
-            throw new InvalidDocumentException(e.getMessage());
-        }
+    	return; //TODO
+//        if(ink == null){
+//            
+//        }
+//        try {
+//            if(ink.getViewRoot().getCanvas() != null){
+//                InkAnno.getInstance().getCanvas().acceptAsCompatible(ink.getViewRoot().getCanvas(),true);
+//            }else if(InkAnno.getInstance().getCanvas().getTraceFormat() != null){
+//                InkAnno.getInstance().getCanvas().getTraceFormat().acceptAsCompatible(ink.getViewRoot().getContext().getSourceFormat(),true);
+//            }
+//        } catch (InkMLComplianceException e) {
+//            throw new InvalidDocumentException(e.getMessage());
+//        }
     }
 
 
