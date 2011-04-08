@@ -1,4 +1,4 @@
-<project name="InkAnno" default="jar" basedir=".">
+<project name="InkAnno" default="all" basedir=".">
 	
     <description>
         Simple gui application that makes it easy to annotate
@@ -78,8 +78,9 @@
 			<property name="inkanno.classpath" value="${inkanno.dir}/${build}"/>
 			<property name="libinkml.jar" value="${tmp.libinkml.jar.dir}/${tmp.libinkml.jar.name}"/>
 			<property name="libinkml.dir" value="${tmp.libinkml.dir.dir}/${tmp.libinkml.dir.name}"/>
+            <property name="plugin.dir" value="${plugin.dir}"/>
 			<target name="jar"/>
-			<fileset dir="plugins" includes="*/build.xml"/>
+			<fileset dir="${plugin.dir}" includes="*/build.xml"/>
 		</subant>
 	</target>
 	
