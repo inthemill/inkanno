@@ -6,6 +6,8 @@ package ch.unibe.im2.inkanno;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.unibe.eindermu.utils.NumberList;
+import ch.unibe.eindermu.utils.NumberList.Double;
 import ch.unibe.im2.inkanno.util.Histogram;
 import ch.unibe.inkml.InkInk;
 import ch.unibe.inkml.InkTraceView;
@@ -25,6 +27,8 @@ public class InkStatistics {
 	private double w_mean;
 	private double w_var;
 	private double h_var;
+	private double d_mean;
+	private java.lang.Double d_var;
     
     public InkStatistics(InkInk ink){
         this.ink = ink;
@@ -39,10 +43,13 @@ public class InkStatistics {
         Histogram h = new Histogram((int) ink.getBounds().height);
         Histogram w = new Histogram((int) ink.getBounds().width);
         
+        Double dur = new NumberList.Double();
+        
         for(InkTraceView stroke : ink.getFlatTraceViewLeafs(null)){
             if(passFilters((InkTraceViewLeaf) stroke)){
                 h.inc((int) stroke.getBounds().height);
                 w.inc((int) stroke.getBounds().width);
+                dur.add(stroke.getTimeSpan().getDuration());
             }
         }
         h.smooth(2);
@@ -52,6 +59,9 @@ public class InkStatistics {
         h_var  = h.getVariance();
         w_mean = w.getMean();
         w_var  = w.getVariance();
+        
+        d_mean = dur.getMean();
+        d_var = dur.getVariance();
     }
 
     /**
@@ -85,5 +95,16 @@ public class InkStatistics {
 
 	public double getH_var() {
 		return h_var;
+	}
+
+	public InkInk getInk() {
+		return this.ink;
+	}
+
+	public double getDurationMean() {
+		return d_mean;
+	}
+	public double getDurationVar() {
+		return d_var;
 	}
 }

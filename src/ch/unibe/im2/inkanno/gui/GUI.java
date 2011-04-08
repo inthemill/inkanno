@@ -55,6 +55,7 @@ import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
+import ch.unibe.im2.inkanno.DrawPropertyManager;
 import ch.unibe.im2.inkanno.controller.CanvasController;
 import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
@@ -100,18 +101,25 @@ public class GUI extends JFrame implements Observable, Observer{
     }    
     
     public GUI(DocumentManager dm) {
-        setDocumentManager(dm);
-        GUI.instance = this;
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    	GUI.instance = this;
+    	JFrame.setDefaultLookAndFeelDecorated(true);
+    	this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    	this.getContentPane().setLayout(new BorderLayout());
+    	
+    	
+    	this.setDocumentManager(dm);
         this.menu = new Menu(this);
-        this.getContentPane().setLayout(new BorderLayout());
-        
         this.buildGUIContent();
+        DrawPropertyManager.getInstance().registerFor(DrawPropertyManager.EVENT_NEW_COLORIZER, this);
+        DrawPropertyManager.getInstance().registerFor(new DrawPropertyManager.PropertyChangeEventAspect(DrawPropertyManager.IS_TRACE_GROUP_VISIBLE), this);
+        
+        
         this.getContentPane().setMinimumSize(new Dimension(300, 300));
         this.pack();
         this.setVisible(true);
         this.setTitle("InkAnno");
+        
+        
         
         this.addWindowListener(new WindowListener() {
             @Override
@@ -247,6 +255,12 @@ public class GUI extends JFrame implements Observable, Observer{
         //if the current document has changed its status from unsaved to saved
         else if(event == Document.ON_SAVE){
             setTitle("InkAnno" + " - " + ((Document)subject).getName());
+        }
+        //if colorizer has changed
+        else if(event == DrawPropertyManager.EVENT_NEW_COLORIZER){
+        	canvas.repaint();
+        }else if(event instanceof DrawPropertyManager.PropertyChangeEventAspect){
+        	canvas.repaint();
         }
     }
     

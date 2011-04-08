@@ -12,6 +12,7 @@ import java.util.List;
 import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
+import ch.unibe.eindermu.utils.Config;
 import ch.unibe.eindermu.utils.NotImplementedException;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
@@ -267,8 +268,18 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
 
     
     public Document getDocument(File file) throws InvalidDocumentException{
-    	return setCurrentDocument(file);
+    	if(!hasDocument(file)){
+    		try {
+				addDocument(new Document(file,new InkAnnoAnnotationStructure(InkAnno.config())), true, false);
+			} catch (IOException e) {
+				throw new InvalidDocumentException(e.getMessage());
+			}
+    	}else{
+    		setCurrentDocument(file);
+    	}
+    	return getCurrentDocument();
     }
+    
     
     private void handleDocumentLostFocus(int index){
         if(index > -1 && index < size()){

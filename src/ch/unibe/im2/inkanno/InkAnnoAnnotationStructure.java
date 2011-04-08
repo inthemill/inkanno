@@ -3,6 +3,7 @@
  */
 package ch.unibe.im2.inkanno;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +36,12 @@ public class InkAnnoAnnotationStructure extends AnnotationStructure {
     }
     
     
-    /**
+    public InkAnnoAnnotationStructure(File structureFile) throws IOException {
+		super(structureFile);
+	}
+
+
+	/**
      * Return values of the Annotation "Type" of TraceView elements which may contain
      * the TraceViews represented by the list of InkTraceView objects specified in this call.
      * @param listOfElements list of InkTraceViews for which the possible parents must be looked up.

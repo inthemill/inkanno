@@ -14,6 +14,10 @@ import ch.unibe.inkml.util.TraceViewFilter;
  */
 public class NullColorizer implements Colorizer {
 
+	public static NullColorizer factory(){
+		return new NullColorizer();
+	}
+	
     @Override
     public boolean isResponsible(String selection) {
         return selection.equals("black");
@@ -28,5 +32,12 @@ public class NullColorizer implements Colorizer {
     public void setFilter(TraceViewFilter filter) {
         
     }
+
+	@Override
+	public String getCaption() {
+		return "None";
+	}
+    
+    
 
 }

@@ -27,7 +27,7 @@ import java.awt.Polygon;
 import java.util.List;
 
 import ch.unibe.eindermu.utils.GraphicsBackup;
-import ch.unibe.im2.inkanno.gui.color.ColorizerManager;
+import ch.unibe.im2.inkanno.DrawPropertyManager;
 import ch.unibe.inkml.InkChannel;
 import ch.unibe.inkml.InkTracePoint;
 import ch.unibe.inkml.InkTraceView;
@@ -46,7 +46,7 @@ public class GUITraceVisitor extends TraceGraphVisitor{
     private boolean selection = false;
     
     public void go(InkTraceView root){
-        ColorizerManager.getInstance().setFilter(getTraceFilter());
+        DrawPropertyManager.getInstance().getCurrentColorizer().setFilter(getTraceFilter());
     	GraphicsBackup gb = new GraphicsBackup(getGraphics());
     	getGraphics().setColor(BLACK);
     	selection = false;
@@ -58,18 +58,20 @@ public class GUITraceVisitor extends TraceGraphVisitor{
     }
     
     private void paintContainer(InkTraceView c){
-        if(!selection)
-            getGraphics().setColor(GRAY);
-        if(c.isEmpty() || c.isRoot()){
-    		return;
+    	if(DrawPropertyManager.getInstance().getBProperty(DrawPropertyManager.IS_TRACE_GROUP_VISIBLE)){
+	        if(!selection)
+	            getGraphics().setColor(GRAY);
+	        if(c.isEmpty() || c.isRoot()){
+	    		return;
+	    	}
+	    	getGraphics().draw(c.getBounds());
     	}
-    	getGraphics().draw(c.getBounds());
     }
     
     
     protected void paintLeaf(InkTraceViewLeaf s) {
         if(!selection){
-            ColorizerManager.getInstance().setColor(getGraphics(),s);
+            DrawPropertyManager.getInstance().getCurrentColorizer().setColor(getGraphics(),s);
         }
         BasicStroke stroke = new BasicStroke((float) getStrokeWidth(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         if(s.getBrush() != null && s.getBrush().isEraser()) {
