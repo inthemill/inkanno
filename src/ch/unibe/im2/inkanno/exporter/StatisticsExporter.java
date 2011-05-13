@@ -20,6 +20,7 @@ import ch.unibe.im2.inkanno.InkAnno;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
+import ch.unibe.inkml.util.TraceViewFilter;
 import ch.unibe.inkml.util.TraceVisitor;
 
 public class StatisticsExporter extends TraceVisitor implements Exporter {
@@ -47,6 +48,8 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
     
     private StringMap<Integer> professions;
 
+	private boolean appendOutput;
+
     
     /**
      * @param file the file to set
@@ -62,18 +65,18 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
         this.stream = stream;
     }
     
-    /**
-     * 
-     * {@inheritDoc}
-     */
+
     @Override
     public void addCommandLineOptions(Config c) {
-        //no commandline args needed
+        //none
     }
+	@Override
+	public void setOptionsByCommandLineOptions(Config c) {
+		appendOutput = c.getB(InkAnno.CMD_OPT_APPEND);
+	}
 
     /**
      * 
-     * {@inheritDoc}
      * @throws ExporterException 
      */
     public void determineFile(Document doc) throws ExporterException {
@@ -83,7 +86,7 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
         if(Config.getMain().get(AbstractInkAnnoMain.OUTPUT) != null && !Config.getMain().get(AbstractInkAnnoMain.OUTPUT).isEmpty()){
             file = new File(Config.getMain().get(AbstractInkAnnoMain.OUTPUT));
             
-            if(Config.getMain().getB(InkAnno.CMD_OPT_APPEND) && file != null){
+            if(appendOutput && file != null){
                 try {
                     stats.load(new FileInputStream(file));
                 } catch (FileNotFoundException e) {
@@ -108,9 +111,6 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void export() throws ExporterException {
         //preconditions
@@ -334,6 +334,12 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
         return null;
     }
 
+	@Override
+	public void setFilter(TraceViewFilter filter) {
+		addTraceFilter(filter);
+	}
+
+    
     
     
 }

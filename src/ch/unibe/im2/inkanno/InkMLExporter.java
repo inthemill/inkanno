@@ -12,6 +12,7 @@ import ch.unibe.eindermu.utils.XmlHandler;
 import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
 import ch.unibe.inkml.InkMLComplianceException;
+import ch.unibe.inkml.util.TraceViewFilter;
 
 public class InkMLExporter extends XmlHandler implements Exporter {
 	private Document doc;
@@ -39,8 +40,14 @@ public class InkMLExporter extends XmlHandler implements Exporter {
 
     @Override
     public void addCommandLineOptions(Config c) {
+    	//none
     }
-
+	
+    @Override
+	public void setOptionsByCommandLineOptions(Config c) {
+    	//none
+	}
+    
     @Override
     public String getDescription() {
         return Strings.getString("InkAnno.cmd_opt_action_export_inkml_desc"); //$NON-NLS-1$
@@ -99,5 +106,10 @@ public class InkMLExporter extends XmlHandler implements Exporter {
     public JFileChooser getCustomFileChooser(Document doc) {
         return null;
     }
+	@Override
+	public void setFilter(TraceViewFilter filter) {
+		//not applicable, yet!
+	}
+
 
 }
