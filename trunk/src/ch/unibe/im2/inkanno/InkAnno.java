@@ -124,21 +124,19 @@ public class InkAnno extends AbstractInkAnnoMain {
             e.addCommandLineOptions(c);
         }
         
-        
         c.addBooleanOption(CMD_OPT_NO_MARKING, Strings.getString("InkAnno.cmd_opt_no-marking_desc")); //$NON-NLS-1$
-
-        
         c.nameOtherArg(INPUT);
     }
 
     @Override
     protected void start() throws FileNotFoundException, IOException{
-        if(getConfig().getB(CMD_OPT_VERSION)){
+    	Config c =getConfig(); 
+        if(c.getB(CMD_OPT_VERSION)){
             System.out.println(APP_VERSION);
             System.exit(0);
         }
         loadInkAnnoCanvas();
-        String command =  getConfig().get(CMD_OPT_ACTION);
+        String command =  c.get(CMD_OPT_ACTION);
         if(command.equals(CMD_OPT_ACTION_GUI)){
             startGui();
         }else if(command.equals(CMD_OPT_ACTION_REPAIR)){
@@ -154,6 +152,7 @@ public class InkAnno extends AbstractInkAnnoMain {
                             Messenger.error("No input file has been specified"); 
                             System.exit(1);
                         }*/
+                        exporter.setOptionsByCommandLineOptions(c);
                         exporter.export();
                     } catch (ExporterException e) {
                         // TODO Auto-generated catch block

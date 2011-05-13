@@ -9,6 +9,7 @@ import ch.unibe.eindermu.utils.Config;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
 import ch.unibe.im2.inkanno.Strings;
+import ch.unibe.inkml.util.TraceViewFilter;
 
 public interface Exporter {
     public final static String ERR_NO_DOCUMENT = Strings.getString("Exporter.err_no_document"); //$NON-NLS-1$;
@@ -32,6 +33,8 @@ public interface Exporter {
 	 */
 	public void addCommandLineOptions(Config c);
 	
+	
+	public void setOptionsByCommandLineOptions(Config c);
 	/**
 	 * Sets to document which should be exported 
 	 * @param document
@@ -39,6 +42,8 @@ public interface Exporter {
 	 */
     public void setDocument(Document document) throws ExporterException;
     
+    
+    public void setFilter(TraceViewFilter filter);
     /**
      * Set iterator over a list of documents, which will by processed in the given order.
      * If possible the exported information will be stored in one output file.

@@ -15,6 +15,7 @@ import ch.unibe.im2.inkanno.AbstractInkAnnoMain;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
 import ch.unibe.im2.inkanno.InkAnno;
+import ch.unibe.inkml.util.TraceViewFilter;
 
 /**
  * @author emanuel
@@ -24,9 +25,10 @@ public abstract class AbstractExporter implements Exporter {
     
     private File            file;
     private OutputStream    stream;
-    
     private DocumentManager docMan;
-
+	
+    private boolean appendOutput;
+    private TraceViewFilter filter;
 
     @Override
     public void setDocument(Document document) throws ExporterException {
@@ -108,8 +110,20 @@ public abstract class AbstractExporter implements Exporter {
      * @return
      */
     public boolean isAppendEnabled(){
-        return Config.getMain().getB(InkAnno.CMD_OPT_APPEND);
+        return appendOutput;
     }
+    
+    public TraceViewFilter getFilter(){
+    	return filter;
+    }
+    public void  setFilter(TraceViewFilter filter){
+    	this.filter = filter;
+    }
+    
+	@Override
+	public void setOptionsByCommandLineOptions(Config c) {
+		appendOutput = c.getB(InkAnno.CMD_OPT_APPEND);
+	}
     
     /**
      * Decision tree: Says what case we have

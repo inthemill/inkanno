@@ -176,8 +176,8 @@ public class TraceCanvas extends Component implements Observable, Observer{
             
             
         }
-        gb.reset();
         this.observerSupporter.notifyObserver(ON_PAINT,g);
+        gb.reset();
     }
     
     public AffineTransform getAffineTransform() {
