@@ -20,7 +20,11 @@ import ch.unibe.im2.inkanno.DocumentManager;
 import ch.unibe.im2.inkanno.exporter.AbstractExporter;
 import ch.unibe.im2.inkanno.exporter.Exporter;
 import ch.unibe.im2.inkanno.exporter.ExporterException;
+import ch.unibe.im2.inkanno.filter.AnnotationBasedFilter;
+import ch.unibe.im2.inkanno.filter.BooleanFilterCombinor;
+import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
+import ch.unibe.inkml.util.TraceViewFilter;
 
 import com.sun.media.jai.codec.BMPEncodeParam;
 import com.sun.media.jai.codec.ImageEncodeParam;
@@ -36,6 +40,12 @@ public class ImageExporter extends AbstractExporter {
     private String outputType;
 
     private Dimension forcedDimension;
+
+	private boolean ignoreMarking;
+
+	private boolean adoptStrokeWidth;
+    
+    
 	
 	private static List<RegisteredImageExportDrawer> drawers;
 	
@@ -74,6 +84,7 @@ public class ImageExporter extends AbstractExporter {
 	    drawers.add(new ImageSimpleColorBlockDrawer());
 	    drawers.add(new ImageSimpleColorTextlineDrawer());
 	    drawers.add(new ImageTraceIDDrawer());
+	    drawers.add(new ImageTextNonTextDrawer());
 	 
 	}
 	
@@ -199,8 +210,19 @@ public class ImageExporter extends AbstractExporter {
             }
             
             drawer.setDimension(dimension);
+            
             drawer.setStrokeWidth(15 * doc.getMostCommonTraceHeight()/100.0);
-            drawer.addTraceFilter(doc.getTraceFilter());
+            if(adoptStrokeWidth && GUI.hasInstance()){
+            	drawer.setStrokeWidth(GUI.getInstance().getCurrentDocumentView().getStrokeWidth());
+            }
+            TraceViewFilter f = new AnnotationBasedFilter("Garbage");
+            if(getFilter() != null){
+            	f = new BooleanFilterCombinor(BooleanFilterCombinor.Type.AND, f, getFilter());
+            }
+            if(ignoreMarking){
+            	f = new BooleanFilterCombinor(BooleanFilterCombinor.Type.AND,f,new AnnotationBasedFilter("Marking"));
+            }
+            drawer.addTraceFilter(f);
             drawer.setOrientation(!doc.isHMirroring(),!doc.isVMirroring());
             drawer.setGraphics(g2);
             drawer.go(doc.getCurrentViewRoot());
@@ -294,7 +316,7 @@ public class ImageExporter extends AbstractExporter {
         fc.setFileFilter(new FileFilter(){
             @Override
             public boolean accept(File f) {
-                return FileType.getValue(FileUtil.getInfo(f).extension) != null;
+                return f.isDirectory() || FileType.getValue(FileUtil.getInfo(f).extension) != null;
             }
             public String getDescription() {
                 return "image files";
@@ -313,4 +335,14 @@ public class ImageExporter extends AbstractExporter {
     public void setDimension(Dimension dimension) {
         forcedDimension = dimension;
     }
+
+
+	public void setIgnoreMarking(boolean selected) {
+		ignoreMarking = selected;
+	}
+
+
+	public void setAdoptStrokeWidth(boolean selected) {
+		adoptStrokeWidth = selected;
+	}
 }

@@ -11,6 +11,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -26,12 +28,18 @@ public class ImageExportGUI extends JPanel implements PropertyChangeListener{
 	private JFormattedTextField xField;
 	private JFormattedTextField yField;
 	private ImageExporter ie;
+	private JCheckBox ignoreMarkingCheckbox;
+	private JCheckBox adoptStrokeWidthCheckbox;
 	public ImageExportGUI(final Document doc, ImageExporter imageExporter) {
 			this.ie = imageExporter;
 			final double factor = doc.getBounds().getWidth() / doc.getBounds().getHeight();
+			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+			
 	        setPreferredSize(new Dimension(155, 150));
 	        setMaximumSize(new Dimension(155, 700));
+	        setMinimumSize(new Dimension(155, 150));
 	        Box mainBox = Box.createVerticalBox();
+	        mainBox.setAlignmentY(Box.LEFT_ALIGNMENT);
 	        
 	        mainBox.add(new JLabel("File Type:  "));
 	        fileTypeComboBox= new JComboBox();
@@ -99,7 +107,27 @@ public class ImageExportGUI extends JPanel implements PropertyChangeListener{
 	        mainBox.add(xField);
 	        mainBox.add(new JLabel("x"));
 	        mainBox.add(yField);
-	        //mainBox.add(sizeBox);
+	        
+	        ignoreMarkingCheckbox = new JCheckBox("ignore Marking",false);
+	        ignoreMarkingCheckbox.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ie.setIgnoreMarking(ignoreMarkingCheckbox.isSelected());
+				}
+			});
+	        mainBox.add(ignoreMarkingCheckbox);
+	        
+	        
+	        adoptStrokeWidthCheckbox = new JCheckBox("adopt StrokeWidth",false);
+	        adoptStrokeWidthCheckbox.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ie.setAdoptStrokeWidth(adoptStrokeWidthCheckbox.isSelected());
+				}
+			});
+	        mainBox.add(adoptStrokeWidthCheckbox);
+	        
+	        
 	        add(mainBox);
 	        this.revalidate();
     }
