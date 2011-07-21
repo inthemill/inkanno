@@ -177,7 +177,7 @@ public class InkAnno extends AbstractInkAnnoMain {
      */
     private void loadInkAnnoCanvas(){
         try {
-            InkMLImporter importer = new InkMLImporter((getClass().getResource("InkAnnoInkMLCanvas.inkml").openStream()));
+            InkMLImporter importer = new InkMLImporter((getClass().getResourceAsStream("InkAnnoInkMLCanvas.inkml")));
             defaultCanvas = (InkCanvas) importer.createInk().getDefinitions().get("inkAnnoCanvas");
         } catch (Throwable e) {
             Messenger.error(String.format("Can't load inkanno canvas: %s",e.getMessage()));

@@ -130,6 +130,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
                 notifyObserver(ON_DOCUMENT_CONSTRUCTED, documents.get(cursor));
                 notifyObserver(ON_NEW_DOCUMENT, documents.get(cursor));
             } catch (IOException e) {
+            	e.printStackTrace();
                 throw new InvalidDocumentException(String.format("Can't load document '%s': %s",files.get(cursor),e.getMessage()));
             }
         }

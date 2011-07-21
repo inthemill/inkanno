@@ -22,11 +22,15 @@
 
 package ch.unibe.im2.inkanno;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -63,7 +67,26 @@ public class DocumentRecognizer extends DefaultHandler{
     private SAXParser parser;
     
     public StrokeImporter getStrokeImporter(File file) throws IOException, InvalidDocumentException {
-        this.loadFromFile(file);
+    	
+    	InputStream stream  = null;
+    	/*try{
+	    	ZipFile zipfile = new ZipFile(file);
+	    	ZipEntry file_in_zipfile = zipfile.getEntry(file.getName());
+	    	if(file_in_zipfile != null){
+	    		stream = zipfile.getInputStream(file_in_zipfile);
+	    	}else{
+	    		zipfile.close();
+	    		throw new IOException("Inkanno input file may be ziped, then the zipfile must contain a file the same name as the zipfile");
+	    	}
+    	}catch (ZipException e) {
+			// file seams not to be a zip file. this is ugly but i don't know an other method to test for a zip file.*/
+    		stream = new FileInputStream(file);
+		//}
+    	BufferedInputStream bstream = new BufferedInputStream(stream);
+    	bstream.mark(10000);
+        this.loadFromFile(bstream);
+        bstream.reset();
+        
         switch (result){
         	case IAM_ON_DB:
         		return new IAMonDBImporter(file);
@@ -87,18 +110,20 @@ public class DocumentRecognizer extends DefaultHandler{
     	return result;
     }
     
-    private void loadFromFile(File file) throws IOException {
+    private void loadFromFile(BufferedInputStream bstream) throws IOException {
+    	
         // Find a parser
-    	if(this.textNonXMLFormat(file)){
+
+    	if(this.textNonXMLFormat(bstream)){
     		return;
     	}
+    	bstream.reset();
     	
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
-        InputStream stream = new FileInputStream(file);
         try {
             this.parser = factory.newSAXParser();
-            this.parser.parse(stream, this);
+            this.parser.parse(bstream, this);
             
         } catch(ParserConfigurationException e) {
             throw new IOException(e.getMessage());
@@ -108,17 +133,15 @@ public class DocumentRecognizer extends DefaultHandler{
             }
         }finally{
         	this.parser = null;
-        	stream.close();
         }
     }
     
-    private boolean textNonXMLFormat(File file) throws IOException {
-		Scanner scan = new Scanner(file);
-		if(scan.findInLine("Pen id:")!= null){
+    private boolean textNonXMLFormat(InputStream stream) throws IOException {
+		Scanner scan = new Scanner(stream);
+		if(scan.findWithinHorizon("Pen id:", 1000)!= null){
 			this.result = FileType.PGC_CUSTOM;
 			return true;
 		}
-		scan.close();
 		return false;
 	}
 

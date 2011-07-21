@@ -186,6 +186,7 @@ public class Contr implements ActionListener{
             failed = null;
             try {
                 ex.setDocument(d);
+                ex.setFilter(d.getTraceFilter());
                 JFileChooser fc = ex.getCustomFileChooser(d);
                 if(fc == null){
                     fc = GUI.fileChooser;

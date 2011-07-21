@@ -130,6 +130,7 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
             try {
                 currentDocument = documentIterator.nextDocument();
             } catch (InvalidDocumentException e) {
+            	e.printStackTrace();
                 throw new ExporterException(e.getMessage());
             }
             nrDocuments += 1;
@@ -264,6 +265,9 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
     @Override
     protected void visitHook(InkTraceViewContainer container) {
         //word Counter
+    	if(!container.testAnnotation("type","Garbage")){
+    		inc("container-count");
+    	}
         if(container.testAnnotation("type", "Word") || container.testAnnotation("type", "Symbol")){
             inc("word-count");
         }else if(container.testAnnotation("type", "Textblock")){
@@ -313,16 +317,21 @@ public class StatisticsExporter extends TraceVisitor implements Exporter {
     }
     
     public void inc(String key){
+        inc(key,1);
+    }
+    
+    public void inc(String key,int amount){
         if(!ints.containsKey(key)){
             ints.put(key,0);
         }
-        ints.put(key,ints.get(key)+1);
+        ints.put(key,ints.get(key)+amount);
     }
 
     @Override
     protected void visitHook(InkTraceViewLeaf leaf) {
         if(!leaf.testAnnotationTree("type", "Garbage")){
             inc("stroke-count");
+            inc("point-count",leaf.getPointCount());
         }
         if((leaf.testAnnotationTree("type","Textline") && !leaf.testAnnotationTree("type","Correction")) || leaf.testAnnotationTree("type","Formula")){
             inc("text-stroke-count");
