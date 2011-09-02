@@ -39,7 +39,10 @@ public class InkAnnoAnnotationStructure extends AnnotationStructure {
     public InkAnnoAnnotationStructure(File structureFile) throws IOException {
 		super(structureFile);
 	}
-
+    
+    public InkAnnoAnnotationStructure() throws IOException {
+		super();
+	}
 
 	/**
      * Return values of the Annotation "Type" of TraceView elements which may contain
