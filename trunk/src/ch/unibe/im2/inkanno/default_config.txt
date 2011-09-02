@@ -1,2 +1,2 @@
-annotation_structure_file = InkAnnoStructure.xml
+annotation_structure_file = InkAnnoAnnotationStructure.xml
 file_chooser_dir = 

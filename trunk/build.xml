@@ -42,7 +42,7 @@
     	<copy todir="${build}/ch/unibe/im2/inkanno">
     		<filelist dir="${src}/ch/unibe/im2/inkanno">
     			  <file name="default_config.txt"/>
-    			  <file name="InkAnnoStructure.xml"/>
+    			  <file name="InkAnnoAnnotationStructure.xml"/>
     			  <file name="strings.properties"/>
     		      <file name="InkAnnoInkMLCanvas.inkml"/>
     		</filelist>
