@@ -51,6 +51,7 @@ import ch.unibe.eindermu.utils.NotImplementedException;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.DocumentManager;
+import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;
 import ch.unibe.im2.inkanno.Selection;
 import ch.unibe.inkml.InkTraceView;
 
@@ -245,7 +246,7 @@ public class TraceProperties extends JPanel implements Observer{
     protected void setComboBoxElements(JComboBox cb) {
         cb.removeAllItems();
         cb.addItem("");
-    	for(String item : getDocument().getAnnotationStructure().getTraceViewTypes()) {
+    	for(String item : InkAnnoAnnotationStructure.getTraceViewTypes(getDocument().getAnnotationStructure())) {
 		    cb.addItem(item);
 		}
 	}

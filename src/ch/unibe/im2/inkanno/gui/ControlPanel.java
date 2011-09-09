@@ -57,6 +57,7 @@ import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTree;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTreeModel;
 import ch.unibe.im2.inkanno.gui.tree.TreeListener;
+import ch.unibe.inkml.AnnotationStructure;
 import ch.unibe.inkml.InkInk;
 import ch.unibe.inkml.AnnotationStructure.Annotation;
 import ch.unibe.inkml.AnnotationStructure.Item;
@@ -115,7 +116,7 @@ public class ControlPanel extends JPanel implements Observer{
         typeComboBox.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String selectedType = (String) typeComboBox.getSelectedItem();
-				Item i = getAnnotationStructure().getTraceViewItem(selectedType);
+				Item i = InkAnnoAnnotationStructure.getTraceViewItem(getAnnotationStructure(),selectedType);
 				Annotation a = null;
 				if(i!=null){
 				   a = i.getAnnotation("transcription");    
@@ -161,7 +162,7 @@ public class ControlPanel extends JPanel implements Observer{
         	label.setBackground(comp.getBackground());
         	Icon icon;
         	if(value != null && getAnnotationStructure() != null){
-        	    icon = getAnnotationStructure().getTraceViewIcon((String)value);
+        	    icon = InkAnnoAnnotationStructure.getTraceViewIcon(getAnnotationStructure(),(String)value);
     			if(icon != null){
             		label.setIcon(icon);
             	}
@@ -454,7 +455,7 @@ public class ControlPanel extends JPanel implements Observer{
 	
 	private InkAnnoAnnotationStructure getAnnotationStructure(){
 	    if(gui.hasDocument()){
-	        return gui.getCurrentDocument().getAnnotationStructure();
+	        return (InkAnnoAnnotationStructure) gui.getCurrentDocument().getAnnotationStructure();
 	    }
 	    return  null;
 	}

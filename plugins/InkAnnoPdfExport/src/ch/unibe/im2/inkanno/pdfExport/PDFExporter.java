@@ -149,7 +149,6 @@ public class PDFExporter extends AbstractExporter {
 	        drawer.setDimension(new Dimension((int) PageSize.A4.getWidth()-100,(int) PageSize.A4.getHeight()-100));
 	        drawer.addTraceFilter(document.getTraceFilter());
 	        drawer.setStrokeWidth(15 * document.getMostCommonTraceHeight()/100.0);
-	        drawer.setOrientation(!document.isHMirroring(), !document.isVMirroring());
 	        drawer.setGraphics(g2);
 	        drawer.go(document.getCurrentViewRoot());
 	        g2.dispose();
