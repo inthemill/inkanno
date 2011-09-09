@@ -78,8 +78,6 @@ public class Document extends AbstractObservable{
     private boolean isSaved = true;
     private TraceViewFilter traceFilter;
     private Selection selection;
-
-    private String name;
     
 	private InkInk ink;
 
@@ -87,17 +85,12 @@ public class Document extends AbstractObservable{
 	
 	private DocumentRecognizer.FileType type;
 	
-	//DisplayInformation
+    private AnnotationStructure annotationStructure;
 
-	//private double strokeWeight = 15;
-
-    private double mostCommonTraceHeight;
-
-    
-    private InkAnnoAnnotationStructure annotationStructure; 
+    private InkStatistics statistics; 
     
 
-	public Document(File file, InkAnnoAnnotationStructure structure) throws IOException, InvalidDocumentException {
+	public Document(File file, AnnotationStructure structure) throws IOException, InvalidDocumentException {
     	//initialisation
         
 	    annotationStructure = structure;
@@ -105,15 +98,9 @@ public class Document extends AbstractObservable{
     	DocumentRecognizer dr = new DocumentRecognizer();
         dr.getStrokeImporter(file).importTo(this);
         testInkAnnoCompatibility();
-        this.name = file.getName();
         type = dr.getType(); 
-        if(type == DocumentRecognizer.FileType.INKML){
-        	this.file = file;
-        	setSaved(true);
-        }else{
-        	this.file = file;
-        	setSaved(false);
-        }
+    	this.file = file;
+    	setSaved(true);
         
         //stats
         this.generateTraceStatistics();
@@ -167,28 +154,8 @@ public class Document extends AbstractObservable{
      * later accessible through other methods
      */
     private void generateTraceStatistics(){
-        Histogram h = new Histogram(this.getBounds().height);
-        for(InkTrace stroke : this.getInk().getFlatTraces()){
-            //this.averageTraceHeight += stroke.getBounds().height;
-            h.inc((int) stroke.getBounds().height);
-        }
-        h.smooth(2);
-    	//this.averageTraceHeight = this.averageTraceHeight / this.getInk().getFlatTraces().size();
-    	List<Integer> indexes = h.getOrderedMaxima();
-    	if(indexes.size() > 1){
-    	    this.mostCommonTraceHeight = Math.min(indexes.get(0), indexes.get(1));
-    	}else{
-    	    this.mostCommonTraceHeight = indexes.get(0);
-    	}
-    	
-    	
-    	NumberList<Double> ds = new NumberList.Double();
-    	for(InkTrace stroke : this.getInk().getFlatTraces()){
-    	    if((int)mostCommonTraceHeight == (int) stroke.getBounds().height){
-    	        ds.add(stroke.getBounds().height);
-    	    }
-        }
-    	this.mostCommonTraceHeight = ds.getMean();
+    	statistics = new InkStatistics(this.getInk());
+    	statistics.calculate();
     }
     
  
@@ -199,7 +166,6 @@ public class Document extends AbstractObservable{
         exporter.setFile(selectedFile);
         exporter.export();
         file = selectedFile;
-        name = file.getName();
         type = FileType.INKML;
         setSaved(true);
     }
@@ -214,10 +180,6 @@ public class Document extends AbstractObservable{
 
     public void close() {
         // May be here has to be done more than the garbage collector does?
-    }
-
-    public String getName() {
-        return this.name;
     }
 
 
@@ -275,20 +237,6 @@ public class Document extends AbstractObservable{
 	}
 
 
-	public boolean isVMirroring() {
-        for(InkTrace t : this.getInk().getFlatTraces()){
-    		return ((InkTraceLeaf) t).getCanvasFormat().getChannel(InkChannel.ChannelName.Y).getOrientation() == InkChannel.Orientation.M;
-        }
-        return false;
-	}
-	public boolean isHMirroring() {
-        for(InkTrace t : this.getInk().getFlatTraces()){
-    		return ((InkTraceLeaf) t).getCanvasFormat().getChannel(InkChannel.ChannelName.X).getOrientation() == InkChannel.Orientation.M;
-        }
-        return false;
-	}
-
-
 	public List<InkTraceView> getFlattenedViews() {
 		return getInk().getViewRoot().getFlattenedViews(getTraceFilter());
 	}
@@ -299,7 +247,7 @@ public class Document extends AbstractObservable{
 
 
     public double getMostCommonTraceHeight() {
-        return this.mostCommonTraceHeight;
+        return statistics.getMostCommonTraceHeight();
     }
 
 
@@ -307,7 +255,7 @@ public class Document extends AbstractObservable{
         this.annotationStructure = annotationStructure;
     }
     
-    public InkAnnoAnnotationStructure getAnnotationStructure(){
+    public AnnotationStructure getAnnotationStructure(){
         return annotationStructure;
     }
 

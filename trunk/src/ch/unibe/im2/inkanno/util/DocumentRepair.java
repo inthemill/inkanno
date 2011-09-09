@@ -91,7 +91,7 @@ public class DocumentRepair {
 	            ok = true;
 	            System.out.format("Time issue detected: trace %s in document %s has size %f, but should be aroud %f\n", 
 	                list.get(index1).getId(),
-	                doc.getName(),
+	                doc.getFile().getName(),
 	                list.get(index1).getTimeSpan().getDuration(),
 	                list.get(index1+1).getTimeSpan().start - list.get(index1).getTimeSpan().start);
 	            

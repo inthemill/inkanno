@@ -141,14 +141,6 @@ public class TraceCanvas extends Component implements Observable, Observer{
             af = AffineTransform.getTranslateInstance(5, 20);
             af.concatenate(AffineTransform.getScaleInstance(factor, factor));
             af.concatenate(AffineTransform.getTranslateInstance(-bound.x, -bound.y));
-            if(getDocument().isVMirroring()) {
-                af.concatenate(AffineTransform.getScaleInstance(1, -1));
-                af.concatenate(AffineTransform.getTranslateInstance(0, -(2 * bound.y + bound.height)));
-            }
-            if(getDocument().isHMirroring()) {
-                af.concatenate(AffineTransform.getScaleInstance(-1, 1));
-                af.concatenate(AffineTransform.getTranslateInstance(-(2 * bound.x + bound.width), 0));
-            }
         } else {
             this.h = 500;
             this.w = 500;
@@ -165,7 +157,7 @@ public class TraceCanvas extends Component implements Observable, Observer{
         Graphics2D g = (Graphics2D) gr;
         GraphicsBackup gb = new GraphicsBackup(g);
         if(hasDocument() && getAffineTransform() != null) {
-            g.drawString(getDocument().getName(), 5, 15);
+            g.drawString(getDocument().getFile().getName(), 5, 15);
             
             g.transform(getAffineTransform());
             

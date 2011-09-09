@@ -223,7 +223,6 @@ public class ImageExporter extends AbstractExporter {
             	f = new BooleanFilterCombinor(BooleanFilterCombinor.Type.AND,f,new AnnotationBasedFilter("Marking"));
             }
             drawer.addTraceFilter(f);
-            drawer.setOrientation(!doc.isHMirroring(),!doc.isVMirroring());
             drawer.setGraphics(g2);
             drawer.go(doc.getCurrentViewRoot());
             

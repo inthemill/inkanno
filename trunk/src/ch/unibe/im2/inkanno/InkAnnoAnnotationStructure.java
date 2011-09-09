@@ -65,19 +65,19 @@ public class InkAnnoAnnotationStructure extends AnnotationStructure {
     
     
     
-    public StringList getTraceViewTypes(){
-        return getTriggerValues(NodeNames.TRACEVIEW,TYPE);
+    public static StringList getTraceViewTypes(AnnotationStructure structure){
+        return structure.getTriggerValues(NodeNames.TRACEVIEW,TYPE);
     }
     
     
-    public Item getTraceViewItem(String type) {
-        return getItem(NodeNames.TRACEVIEW,new AnnotationStructure.TriggerQuery(TYPE,type));
+    public static  Item getTraceViewItem(AnnotationStructure structure, String type) {
+        return structure.getItem(NodeNames.TRACEVIEW, new AnnotationStructure.TriggerQuery(TYPE,type));
     }
     
     
-    public Icon getTraceViewIcon(String type) {
-        Item item = getTraceViewItem(type);
-        return getIcon(item);
+    public static Icon getTraceViewIcon(AnnotationStructure structure, String type) {
+        Item item = getTraceViewItem(structure,type);
+        return structure.getIcon(item);
     }
     
 }

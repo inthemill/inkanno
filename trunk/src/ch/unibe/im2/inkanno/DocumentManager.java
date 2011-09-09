@@ -4,10 +4,14 @@
 package ch.unibe.im2.inkanno;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.AbstractObservable;
@@ -76,6 +80,38 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
      */
     private int cursor = -1;
     
+    public DocumentManager(File filenamesInFile, File dir) throws FileNotFoundException{
+    	this();
+    	StringList filenames = new StringList();
+    	if(filenamesInFile.isDirectory()){
+			for(File file : filenamesInFile.listFiles()){
+				if(file.isFile() && file.getName().toLowerCase().endsWith("inkml")){
+					filenames.add(file.getPath());
+				}
+			}
+		}else{
+			String d = "";
+			if(dir != null){
+				d = dir.getPath()+File.separator;
+			}
+			Scanner sc;
+				sc = new Scanner(filenamesInFile);
+			while(sc.hasNext()){
+				File file = new File(d+sc.next());
+				if(!file.exists()){
+					file = new File(filenamesInFile.getParent()+File.separator+file.getPath());
+					if(!file.exists()){
+						Messenger.error(String.format("File or directory '%s' not found.", file.getPath()));
+						System.exit(1);
+					}
+				}
+				
+				filenames.add(file.getPath());
+			}
+		}
+    	loadByFileList(filenames, true);
+    }
+    
     /**
      * Instanciates the documentManager with a list of documents.
      * @param documentList
@@ -93,7 +129,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     }
     
     /**
-     * Instaciates the DocumentManager with a list of filenames to documents.
+     * Instantiates the DocumentManager with a list of filenames to documents.
      * A Annotation structure as to be specified the documents will be opened with.
      * The last parameter is a boolean indicating if only the current document should be load in memory
      * or all document should be kept in memory
@@ -102,10 +138,13 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
      * @param loadOnlyCurrent load only current document of keep them in memory when loaded.
      */
     public DocumentManager(List<String> fileList,InkAnnoAnnotationStructure structure, boolean loadOnlyCurrent){
+    	this();
         this.structure = structure;
-        files = fileList;
-        documents = new ArrayList<Document>();
-        keep = new ArrayList<Boolean>();
+        loadByFileList(fileList,loadOnlyCurrent);
+    }
+    
+    private void loadByFileList(List<String> fileList,boolean loadOnlyCurrent){
+    	files = new StringList(fileList);
         for(int i =0;i<files.size();i++){
             keep.add(!loadOnlyCurrent);
             documents.add(null);
@@ -122,11 +161,12 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         keep = new ArrayList<Boolean>();
     }
 
-    
-    private Document loadCurrentDocument() throws InvalidDocumentException{
+
+
+	private Document loadCurrentDocument() throws InvalidDocumentException{
         if(documents.get(cursor) == null){
             try{
-                documents.set(cursor, new Document(new File(files.get(cursor)),(InkAnnoAnnotationStructure) structure));
+                documents.set(cursor, new Document(new File(files.get(cursor)),getAnnotationStructure()));
                 notifyObserver(ON_DOCUMENT_CONSTRUCTED, documents.get(cursor));
                 notifyObserver(ON_NEW_DOCUMENT, documents.get(cursor));
             } catch (IOException e) {
@@ -271,7 +311,11 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
     public Document getDocument(File file) throws InvalidDocumentException{
     	if(!hasDocument(file)){
     		try {
-				addDocument(new Document(file,new InkAnnoAnnotationStructure(InkAnno.config())), true, false);
+    			AnnotationStructure str = getAnnotationStructure();
+    			if(str == null){
+    				str = new InkAnnoAnnotationStructure();
+    			}
+    			addDocument(new Document(file,str), true, false);
 			} catch (IOException e) {
 				throw new InvalidDocumentException(e.getMessage());
 			}

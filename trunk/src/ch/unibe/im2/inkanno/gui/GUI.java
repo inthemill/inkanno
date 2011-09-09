@@ -135,7 +135,7 @@ public class GUI extends JFrame implements Observable, Observer{
                 StringList openDocuments = new StringList();
                 for(Document d : getDocumentManager().getLoadedDocuments()){
                     if(!d.isSaved()){
-                        openDocuments.add(d.getName());
+                        openDocuments.add(d.getFile().getName());
                     }
                 }
                 if(openDocuments.isEmpty()){
@@ -158,7 +158,7 @@ public class GUI extends JFrame implements Observable, Observer{
                                 try {
                                     d.save(d.getFile());
                                 } catch (ExporterException e1) {
-                                    JOptionPane.showMessageDialog(GUI.this, "Was not able to save document '"+d.getName()+"'.\n"+e1.getMessage());
+                                    JOptionPane.showMessageDialog(GUI.this, "Was not able to save document '"+d.getFile().getName()+"'.\n"+e1.getMessage());
                                     return;
                                 } catch (FactoryException e1) {
                                     //will not occure
@@ -218,7 +218,7 @@ public class GUI extends JFrame implements Observable, Observer{
             Document d = (Document)subject;
             d.registerFor(Document.ON_CHANGE, this);
             d.registerFor(Document.ON_SAVE, this);
-            setTitle("InkAnno" + " - " + d.getName()+((d.isSaved())?"":"*"));
+            setTitle("InkAnno" + " - " + d.getFile().getName()+((d.isSaved())?"":"*"));
             strokeWidthSlider.setEnabled(true);
             strokeWidthSlider.setValue((int) (getCurrentDocumentView().getStrokeWidth()*4));
             docs.get((Document)subject).activate();
@@ -249,12 +249,12 @@ public class GUI extends JFrame implements Observable, Observer{
         
         //if the current document has changed its status from saved to unsaved 
         else if(event == Document.ON_CHANGE){
-            setTitle("InkAnno" + " - " + ((Document)subject).getName()+"*");
+            setTitle("InkAnno" + " - " + ((Document)subject).getFile().getName()+"*");
         }
         
         //if the current document has changed its status from unsaved to saved
         else if(event == Document.ON_SAVE){
-            setTitle("InkAnno" + " - " + ((Document)subject).getName());
+            setTitle("InkAnno" + " - " + ((Document)subject).getFile().getName());
         }
         //if colorizer has changed
         else if(event == DrawPropertyManager.EVENT_NEW_COLORIZER){

@@ -268,7 +268,7 @@ public class Contr implements ActionListener{
             d = GUI.getInstance().getCurrentDocument();
         }
         if(!d.isSaved()) {
-            int answer = JOptionPane.showConfirmDialog(GUI.getInstance(), "Document " + d.getName() + " has not been saved, do you want do save it now?", "Document not saved",
+            int answer = JOptionPane.showConfirmDialog(GUI.getInstance(), "Document " + d.getFile().getName() + " has not been saved, do you want do save it now?", "Document not saved",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
             if(answer == JOptionPane.CANCEL_OPTION) {
                 return;
@@ -308,7 +308,7 @@ public class Contr implements ActionListener{
                                 Messenger.warn("Saving unchanged document!");
                             }
                             d.save(d.getFile().getAbsoluteFile());
-                            Messenger.inform(String.format("Document '%s' has been saved to %s.",d.getName(),d.getFile().getPath()));
+                            Messenger.inform(String.format("Document '%s' has been saved to %s.",d.getFile().getName(),d.getFile().getPath()));
                             return true;
                         } catch (ExporterException e) {
                             failed = e;

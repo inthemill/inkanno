@@ -31,6 +31,7 @@ import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.im2.inkanno.util.DocumentRepair;
+import ch.unibe.inkml.AnnotationStructure;
 import ch.unibe.inkml.InkAnnotatedElement;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
@@ -197,7 +198,7 @@ public class AnnotationStructureValidator extends TraceVisitor{
     private GUI gui;
     private Selection selection;
     private Document document;
-    private InkAnnoAnnotationStructure structure;
+    private AnnotationStructure structure;
     private Set<Entry<Item,Object>> ignoring;
     private State state;
     private List<Errors> errors;
