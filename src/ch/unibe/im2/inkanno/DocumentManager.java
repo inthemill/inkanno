@@ -11,12 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.AbstractObservable;
 import ch.unibe.eindermu.utils.Aspect;
-import ch.unibe.eindermu.utils.Config;
 import ch.unibe.eindermu.utils.NotImplementedException;
 import ch.unibe.eindermu.utils.StringList;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
