@@ -33,9 +33,15 @@ public class InkMLImporter extends XmlHandler implements StrokeImporter {
         loadFromStream(stream);
     }
 	
-	private void loadSchema() {
-        addSchema(InkInk.class.getResourceAsStream("xml.xsd"));
-		addSchema(InkInk.class.getResourceAsStream("inkml.xsd"));
+	private void loadSchema() throws IOException {
+		String[] schemas = new String[]{"xml.xsd","inkml.xsd"};
+		for(String schemaName : schemas){
+			InputStream schema = InkInk.class.getResourceAsStream(schemaName);
+			if(schema == null){
+				throw new IOException(String.format("XML schema can not be found at %s.%s",InkInk.class.getCanonicalName(),schemaName));
+			}
+			addSchema(schema);
+		}
 	}
 
 	@Override
