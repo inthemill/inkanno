@@ -10,7 +10,7 @@
     </target>
 
     <target name="compile" depends="dirs" description="compile the source files">
-    	<javac srcdir="${src}" destdir="${build}" encoding="utf-8" debug="true">
+    	<javac srcdir="${src}" destdir="${build}" encoding="utf-8" debug="true" includeantruntime="false">
     		<classpath>
            		<pathelement path="${libinkml.jar}"/>
                 <pathelement path="${inkanno.classpath}"/>          	
