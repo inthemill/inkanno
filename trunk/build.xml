@@ -28,7 +28,7 @@
 	
     <target name="compile" depends="dirs,libInkML,preprocess" description="compile the source files">
         <delete file="MANIFEST.MF"/>
-    	<javac srcdir="${preproc}" destdir="${build}" encoding="utf-8" debug="true" source="1.6">
+    	<javac srcdir="${preproc}" destdir="${build}" encoding="utf-8" debug="true" source="1.6" includeantruntime="false">
         	<classpath>
                 <pathelement path="${libinkml.jar}"/>
         	</classpath>
