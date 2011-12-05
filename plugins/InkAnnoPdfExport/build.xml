@@ -17,11 +17,11 @@
     			<pathelement path="${itext_jar}"/>
         	</classpath>
     	</javac>
-    	<copy todir="${build}/ch/unibe/im2/inkanno/exporter">
-    		<filelist dir="${src}/ch/unibe/im2/inkanno/exporter">
-    			  <file name="exporter_implementation.properties"/>
-    		</filelist>
-    	</copy>
+        <copy todir="${build}/ch/unibe/im2/inkanno/plugins">
+            <fileset dir="${src}/ch/unibe/im2/inkanno/plugins">
+                <include name="*_implementation.properties"/>
+            </fileset>
+        </copy>
     </target>
 	
 

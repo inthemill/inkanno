@@ -1,7 +1,6 @@
 package ch.unibe.im2.inkanno.imageExport;
 
 import java.awt.Color;
-import java.util.regex.Matcher;
 
 import ch.unibe.eindermu.utils.GraphicsBackup;
 import ch.unibe.im2.inkanno.InkAnnoAnnotationStructure;

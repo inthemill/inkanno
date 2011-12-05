@@ -14,17 +14,21 @@ public class Histogram extends NumberList.Double{
         
     }
     
-    private void growTo(int size){
+    protected void growTo(int size){
         while(this.size() < size){
             add(0.0);
         }
     }
     
     public void inc(int place){
-        if(this.size() <= place){
+        inc(place,1);
+    }
+    
+    public void inc(int place,double weight){
+    	if(this.size() <= place){
             growTo(place+1);
         }
-        set(place,get(place)+1);
+        set(place,get(place)+weight);
     }
     
     /**
@@ -68,7 +72,7 @@ public class Histogram extends NumberList.Double{
     /**
      * compresses the histogram to contain <code>bins</code> number of bins.
      * the first bin contains the histogram values which are <=2.
-     * The second bin contains the histogram values which are 
+     * The second bin contains the histogram values which are... two times the size of the first bin, and so on
      * @param bins
      * @return
      */

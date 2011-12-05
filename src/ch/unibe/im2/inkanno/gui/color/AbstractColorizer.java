@@ -3,10 +3,10 @@ package ch.unibe.im2.inkanno.gui.color;
 import java.awt.Graphics2D;
 import java.lang.ref.WeakReference;
 
+import ch.unibe.im2.inkanno.Document;
 import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.inkml.InkInk;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.TraceViewFilter;
 
 public abstract class AbstractColorizer implements Colorizer {
 
@@ -18,9 +18,9 @@ public abstract class AbstractColorizer implements Colorizer {
 	
 	@Override
 	public final void setColor(Graphics2D graphics, InkTraceViewLeaf leaf) {
-		if(doInitialization(leaf.getInk())){
+		/*if(doInitialization(leaf.getInk())){
 			this.initialize(leaf.getInk());
-		}
+		}*/
         internalSetColor(graphics, leaf);
 	}
 
@@ -36,6 +36,7 @@ public abstract class AbstractColorizer implements Colorizer {
 			return false;
 		}
 	}
+	
 	private synchronized void initialize(final InkInk ink) {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -51,4 +52,9 @@ public abstract class AbstractColorizer implements Colorizer {
 	
 	public abstract void internalSetColor(Graphics2D graphics, InkTraceViewLeaf s);
 
+	@Override
+	public void initialize(Document subject) {
+		initialize(subject.getInk());
+	}
+	
 }

@@ -3,8 +3,6 @@ package ch.unibe.im2.inkanno.importer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +16,8 @@ import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceLeaf;
 import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewLeaf;
-import ch.unibe.inkml.util.TraceVisitor;
 import ch.unibe.inkml.util.TraceViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceVisitor;
 
 public class InkMLImporter extends XmlHandler implements StrokeImporter {
 	

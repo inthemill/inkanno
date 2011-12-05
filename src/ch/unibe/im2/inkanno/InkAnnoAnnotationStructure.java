@@ -27,6 +27,7 @@ public class InkAnnoAnnotationStructure extends AnnotationStructure {
      */
     public static final String TYPE = "type";
     
+    
     /**
      * @param config
      * @throws IOException 

@@ -4,9 +4,9 @@
 package ch.unibe.im2.inkanno.gui.color;
 
 import java.awt.Graphics2D;
+import java.util.Collection;
 
-import javax.swing.Icon;
-
+import ch.unibe.im2.inkanno.Document;
 import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.util.TraceViewFilter;
 
@@ -47,4 +47,9 @@ public interface Colorizer {
      * @return Caption
      */
 	public String getCaption();
+
+	
+	Collection<? extends ColorizerCallback> getCallbacks();
+
+	public void initialize(Document subject);
 }

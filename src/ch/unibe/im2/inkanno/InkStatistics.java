@@ -69,11 +69,16 @@ public class InkStatistics {
      * @return
      */
     private boolean passFilters(InkTraceViewLeaf stroke) {
-        for(TraceViewFilter tf : filters){
-            if(!tf.pass(stroke)){
-                return false;
-            }
-        }
+    	if(filters !=  null){
+	        for(TraceViewFilter tf : filters){
+	        	if(tf == null){
+	        		continue;
+	        	}
+	            if(!tf.pass(stroke)){
+	                return false;
+	            }
+	        }
+    	}
         return true;
     }
     

@@ -221,7 +221,11 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
                     if(documents.get(current)== null){
                         documents.set(current, doc);
                     }
-                    return getCurrentDocument();
+                    try {
+            			return setCurrentDocument(current);
+            		} catch (InvalidDocumentException e) {
+            			// will not happen
+            		}
                 }
             }
             addDocument(doc, true, false);
@@ -234,7 +238,7 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         try {
 			return setCurrentDocument(current);
 		} catch (InvalidDocumentException e) {
-			// will now occure
+			// will not happen
 		}
 		return null;
     }
@@ -364,7 +368,13 @@ public class DocumentManager extends AbstractObservable implements Iterable<Docu
         }
         notifyObserver(ON_NEW_DOCUMENT, doc);
         if(setCurrent){
-            setCurrentDocument(doc);
+        	int current = documents.indexOf(doc);
+            try {
+				setCurrentDocument(current);
+			} catch (InvalidDocumentException e) {
+				// will not happen
+				e.printStackTrace();
+			}
         }
     }
     

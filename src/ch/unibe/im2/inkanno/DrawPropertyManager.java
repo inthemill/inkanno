@@ -3,6 +3,8 @@
  */
 package ch.unibe.im2.inkanno;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import ch.unibe.eindermu.utils.Aspect;
 import ch.unibe.eindermu.utils.Config;
@@ -22,7 +25,9 @@ import ch.unibe.eindermu.utils.Observable;
 import ch.unibe.eindermu.utils.Observer;
 import ch.unibe.eindermu.utils.StringMap;
 import ch.unibe.im2.inkanno.exporter.FactoryException;
+import ch.unibe.im2.inkanno.gui.GUI;
 import ch.unibe.im2.inkanno.gui.color.Colorizer;
+import ch.unibe.im2.inkanno.gui.color.ColorizerCallback;
 import ch.unibe.im2.inkanno.gui.color.NullColorizer;
 
 /**
@@ -41,6 +46,21 @@ import ch.unibe.im2.inkanno.gui.color.NullColorizer;
  *
  */
 public class DrawPropertyManager extends Hashtable<String,Object> implements Observable{
+
+	public class ColorizerActionListener implements ActionListener {
+
+		private ColorizerCallback cb;
+
+		public ColorizerActionListener(ColorizerCallback cb) {
+			this.cb = cb;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DrawPropertyManager.this.setColorizer(cb.getColorizerForSelection());
+		}
+
+	}
 
 	public final static Aspect EVENT_NEW_COLORIZER = new Aspect(){};
 	public final static Aspect EVENT_DRAW_PROPERTY_CHANGED = new Aspect(){};
@@ -77,6 +97,15 @@ public class DrawPropertyManager extends Hashtable<String,Object> implements Obs
     	setProperty(IS_TRACE_GROUP_VISIBLE, true);
         loadAvailableColorizer();
         
+        GUI.getInstance().getDocumentManager().registerFor(DocumentManager.ON_DOCUMENT_SWITCH,  new Observer() {
+			@Override
+			public void notifyFor(Aspect event, Object subject) {
+				if(DrawPropertyManager.this.currentColorizer != null){
+					DrawPropertyManager.this.currentColorizer.initialize((Document)subject);
+				}
+			}
+		});
+        
     }
     
 
@@ -84,7 +113,7 @@ public class DrawPropertyManager extends Hashtable<String,Object> implements Obs
     private void loadAvailableColorizer(){
 	    List<Colorizer> l = new ArrayList<Colorizer>();
 	    try {
-	        Enumeration<URL> en  = ClassLoader.getSystemClassLoader().getResources("ch/unibe/im2/inkanno/gui/color/colorizer_implementation.properties");
+	        Enumeration<URL> en  = ClassLoader.getSystemClassLoader().getResources("ch/unibe/im2/inkanno/plugins/colorizer_implementation.properties");
 	        while(en.hasMoreElements()){
 	            Properties p = new Properties();
 	            URL url = en.nextElement();
@@ -106,7 +135,7 @@ public class DrawPropertyManager extends Hashtable<String,Object> implements Obs
 	    }
 	    colorizers = l;
 	    if(colorizers.size() == 0){
-	        currentColorizer = new NullColorizer();
+	    	setColorizer(new NullColorizer());
 	    }else
 	    if(Config.getMain().get("colorizer")!= null && !Config.getMain().get("colorizer").isEmpty()){
 	        String selection = Config.getMain().get("colorizer");
@@ -161,11 +190,15 @@ public class DrawPropertyManager extends Hashtable<String,Object> implements Obs
 	}
 
 	public void setColorizer(Colorizer colorizer){
+		Colorizer oldColorizer = currentColorizer;
     	currentColorizer = colorizer;
     	if(!colorizers.contains(colorizer)){
     		colorizers.add(colorizer);
     	}
-    	this.notifyObserver(EVENT_NEW_COLORIZER);
+    	if(GUI.getInstance().getDocumentManager().hasCurrentDocument()){
+	    	colorizer.initialize(GUI.getInstance().getDocumentManager().getCurrentDocument());
+    		this.notifyObserver(EVENT_NEW_COLORIZER);
+    	}
     }
     
     /*
@@ -252,5 +285,17 @@ public class DrawPropertyManager extends Hashtable<String,Object> implements Obs
 				o.notifyFor(event, this);
 			}
 		}
+	}
+
+	public Vector<ColorizerCallback> getColorizerCallbacks() {
+		Vector<ColorizerCallback>  cbs = new Vector<ColorizerCallback>();
+		for(Colorizer c : getColorizers()){
+			cbs.addAll(c.getCallbacks());
+		}
+		return cbs;
+	}
+
+	public boolean isSelectedColorizer(Colorizer colorizer) {
+		return currentColorizer == colorizer;
 	}
 }
