@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 import ch.unibe.eindermu.Messenger;
 import ch.unibe.eindermu.utils.XmlHandler;
 import ch.unibe.im2.inkanno.Document;

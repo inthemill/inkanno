@@ -57,7 +57,6 @@ import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTree;
 import ch.unibe.im2.inkanno.gui.tree.AnnotationTreeModel;
 import ch.unibe.im2.inkanno.gui.tree.TreeListener;
-import ch.unibe.inkml.AnnotationStructure;
 import ch.unibe.inkml.InkInk;
 import ch.unibe.inkml.AnnotationStructure.Annotation;
 import ch.unibe.inkml.AnnotationStructure.Item;

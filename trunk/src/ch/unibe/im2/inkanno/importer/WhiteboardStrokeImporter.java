@@ -51,7 +51,6 @@ import ch.unibe.inkml.InkTrace;
 import ch.unibe.inkml.InkTraceFormat;
 import ch.unibe.inkml.InkTraceGroup;
 import ch.unibe.inkml.InkTraceLeaf;
-import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.util.TraceViewTreeManipulationException;
 
 public class WhiteboardStrokeImporter extends XmlHandler implements StrokeImporter{

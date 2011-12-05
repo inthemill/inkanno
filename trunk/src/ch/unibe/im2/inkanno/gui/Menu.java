@@ -44,6 +44,7 @@ import ch.unibe.im2.inkanno.DocumentManager;
 import ch.unibe.im2.inkanno.DrawPropertyManager;
 import ch.unibe.im2.inkanno.controller.Contr;
 import ch.unibe.im2.inkanno.gui.color.Colorizer;
+import ch.unibe.im2.inkanno.gui.color.ColorizerCallback;
 import ch.unibe.im2.inkanno.util.InvalidDocumentException;
 
 public class Menu implements Observer{
@@ -89,10 +90,19 @@ public class Menu implements Observer{
         final JMenu view = new JMenu("View");
         view.setMnemonic(KeyEvent.VK_V);
         
-        final JMenu changeColorizer = new JMenu("Change colorizer");
+        final JMenu changeColorizer = new JMenu("Colorization");
         ButtonGroup g = new ButtonGroup();
         final DrawPropertyManager cm = DrawPropertyManager.getInstance();
-        for(Colorizer c : cm.getColorizers()){
+        
+        for(ColorizerCallback cb : cm.getColorizerCallbacks()){
+        	JRadioButtonMenuItem colorizerMenuItem = new JRadioButtonMenuItem(cb.getLabel());
+        	g.add(colorizerMenuItem);
+        	colorizerMenuItem.addActionListener(cm.new ColorizerActionListener(cb));
+        	colorizerMenuItem.setSelected(cb.isSelected());
+        	changeColorizer.add(colorizerMenuItem);
+        }
+        	
+        /*for(Colorizer c : cm.getColorizers()){
         	JRadioButtonMenuItem colorizerMenuItem = new JRadioButtonMenuItem(c.getCaption());
         	g.add(colorizerMenuItem);
         	colorizerMenuItem.addActionListener(new Contr.ChangeColorizer(c));
@@ -100,7 +110,9 @@ public class Menu implements Observer{
         	
         	
         	changeColorizer.add(colorizerMenuItem);
-        }
+        }*/
+        
+        
         gui.setInSyncWithDocumentPresence(changeColorizer);
         changeColorizer.setMnemonic(KeyEvent.VK_C);
         cm.registerFor(DrawPropertyManager.EVENT_NEW_COLORIZER,new Observer() {

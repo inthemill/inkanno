@@ -28,8 +28,8 @@ import ch.unibe.inkml.InkTraceView;
 import ch.unibe.inkml.InkTraceViewContainer;
 import ch.unibe.inkml.InkTraceViewLeaf;
 import ch.unibe.inkml.InkChannel.ChannelName;
-import ch.unibe.inkml.util.TraceVisitor;
 import ch.unibe.inkml.util.TraceViewTreeManipulationException;
+import ch.unibe.inkml.util.TraceVisitor;
 
 public class DocumentRepair {
 	private Document doc;

@@ -51,7 +51,7 @@ public class ExporterFactory {
 	public List<Exporter> loadAvailableExporters(){
 		List<Exporter> l = new ArrayList<Exporter>();
 		try {
-			Enumeration<URL> en  = ClassLoader.getSystemClassLoader().getResources("ch/unibe/im2/inkanno/exporter/exporter_implementation.properties");
+			Enumeration<URL> en  = ClassLoader.getSystemClassLoader().getResources("ch/unibe/im2/inkanno/plugins/exporter_implementation.properties");
 			while(en.hasMoreElements()){
 				Properties p = new Properties();
 				URL url = en.nextElement();

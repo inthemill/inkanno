@@ -47,8 +47,11 @@
     		      <file name="InkAnnoInkMLCanvas.inkml"/>
     		</filelist>
     	</copy>
-    	<copy todir="${build}/ch/unibe/im2/inkanno/exporter" 
-    		file="${src}/ch/unibe/im2/inkanno/exporter/exporter_implementation.properties"/>
+        <copy todir="${build}/ch/unibe/im2/inkanno/plugins">
+             <fileset dir="${src}/ch/unibe/im2/inkanno/plugins">
+                 <include name="*_implementation.properties"/>
+             </fileset>
+         </copy>
     </target>
 
 	
