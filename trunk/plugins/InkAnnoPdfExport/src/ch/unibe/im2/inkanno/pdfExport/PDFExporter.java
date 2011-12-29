@@ -120,9 +120,10 @@ public class PDFExporter extends AbstractExporter {
                 }else{
                     stream = new FileOutputStream(file);
                 }
-                writer = PdfWriter.getInstance(pdfDoc,stream);
-                cb = writer.getDirectContent();
 	            pdfDoc = new com.lowagie.text.Document();
+	            writer = PdfWriter.getInstance(pdfDoc,stream);
+	            pdfDoc.open();
+                cb = writer.getDirectContent();
 	            if((cas == 2 || cas == 5 || cas == 9 || cas == 12) && file.exists()){ // if we append to existing pdf
 	                File f = File.createTempFile("export-backup", "pdf");
 	                FileUtil.copyFile(getFile(),f);
